@@ -32,12 +32,20 @@ const principles = [
       content="Aether is a modular platform for creating immersive digital experiences."
     />
     <title>Aether — Build immersive digital experiences</title>
+      <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   </head>
 
   <body>
     <header class="site-header">
       <a class="brand" href="/" aria-label="Aether home">
-        AETHER
+        <img
+          src="/brand/aether-mark.svg"
+          alt="Create Aether"
+          class="brand-logo"
+          width="52"
+          height="52"
+        />
+        <span>Create Aether</span>
       </a>
 
       <nav aria-label="Primary navigation">
@@ -55,31 +63,56 @@ const principles = [
 
     <main>
       <section class="hero">
-        <p class="eyebrow">A modular experience platform</p>
+        <div class="hero-content">
+          <p class="eyebrow">A modular experience platform</p>
 
-        <h1>Build immersive digital experiences.</h1>
+          <h1>Build immersive digital experiences.</h1>
 
-        <p class="hero-copy">
-          Aether combines atmosphere, interaction and elegant engineering
-          to help developers create richer experiences for the web.
-        </p>
+          <p class="hero-copy">
+            Aether combines atmosphere, interaction and elegant engineering
+            to help developers create richer experiences for the web.
+          </p>
 
-        <div class="actions">
-          <a class="button primary" href="#platform">Explore Aether</a>
-          <a
-            class="button secondary"
-            href="https://github.com/Benchelt/createaether-website"
-            target="_blank"
-            rel="noreferrer"
-          >
-            View on GitHub
-          </a>
+          <div class="actions">
+            <a class="button primary" href="#platform">Explore Aether</a>
+            <a
+              class="button secondary"
+              href="https://github.com/Benchelt/createaether-website"
+              target="_blank"
+              rel="noreferrer"
+            >
+              View on GitHub
+            </a>
+          </div>
+
+          <div class="status" aria-label="Project status">
+            <span>Open development</span>
+            <span>Astro foundation</span>
+            <span>Python-ready roadmap</span>
+          </div>
         </div>
 
-        <div class="status" aria-label="Project status">
-          <span>Open development</span>
-          <span>Astro foundation</span>
-          <span>Python-ready roadmap</span>
+        <div class="hero-visual" aria-hidden="true">
+          <div class="aether-field">
+            <div class="field-glow"></div>
+
+            <div class="field-rings">
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+
+            <div class="energy-line"></div>
+
+            <img
+              src="/brand/aether-mark.svg"
+              alt=""
+              class="hero-mark"
+              width="320"
+              height="320"
+            />
+          </div>
         </div>
       </section>
 
@@ -149,17 +182,37 @@ const principles = [
   .site-header {
     width: min(1180px, calc(100% - 40px));
     margin: 0 auto;
-    padding: 28px 0;
+    padding: 34px 0;
     display: flex;
     align-items: center;
     justify-content: space-between;
   }
 
-  .brand {
-    font-size: 0.9rem;
-    font-weight: 750;
-    letter-spacing: 0.24em;
-  }
+  
+.brand-logo {
+  width: 52px;
+  height: 52px;
+  display: block;
+  flex-shrink: 0;
+}
+
+.brand span {
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+
+    color: #ffffff;
+}
 
   nav {
     display: flex;
@@ -180,11 +233,159 @@ const principles = [
 
   .hero {
     min-height: 720px;
-    padding: 130px 0 100px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+    padding: 90px 0 100px;
+    display: grid;
+    grid-template-columns: minmax(0, 1.18fr) minmax(340px, 0.82fr);
+    align-items: center;
+    gap: clamp(48px, 7vw, 110px);
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    min-width: 0;
+  }
+
+  .hero-visual {
+    position: relative;
+    min-height: 520px;
+    display: grid;
+    place-items: center;
+  }
+
+  .aether-field {
+    position: relative;
+    width: min(100%, 500px);
+    aspect-ratio: 1;
+    display: grid;
+    place-items: center;
+    isolation: isolate;
+  }
+
+  .field-glow {
+    position: absolute;
+    inset: 15%;
+    border-radius: 50%;
+    background:
+      radial-gradient(
+        circle,
+        rgba(102, 227, 255, 0.22) 0%,
+        rgba(79, 124, 255, 0.16) 28%,
+        rgba(101, 71, 255, 0.08) 52%,
+        transparent 72%
+      );
+    filter: blur(18px);
+    animation: aether-pulse 7s ease-in-out infinite;
+  }
+
+  .hero-mark {
+    position: relative;
+    z-index: 3;
+    width: min(62%, 320px);
+    height: auto;
+    filter:
+      drop-shadow(0 0 18px rgba(102, 227, 255, 0.28))
+      drop-shadow(0 24px 42px rgba(79, 124, 255, 0.25));
+    animation: aether-float 7s ease-in-out infinite;
+  }
+
+  .energy-line {
+    position: absolute;
+    z-index: 2;
+    top: 48%;
+    bottom: 12%;
+    width: 2px;
+    background:
+      linear-gradient(
+        to bottom,
+        rgba(102, 227, 255, 0),
+        rgba(102, 227, 255, 0.95),
+        rgba(79, 124, 255, 0)
+      );
+    box-shadow:
+      0 0 12px rgba(102, 227, 255, 0.8),
+      0 0 28px rgba(79, 124, 255, 0.45);
+  }
+
+  .field-rings {
+    position: absolute;
+    z-index: 1;
+    left: 50%;
+    bottom: 7%;
+    width: 82%;
+    aspect-ratio: 2.7 / 1;
+    transform: translateX(-50%);
+  }
+
+  .field-rings span {
+    position: absolute;
+    inset: 50%;
+    border: 1px solid rgba(79, 124, 255, 0.42);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 16px rgba(79, 124, 255, 0.12);
+    animation: ring-breathe 6s ease-in-out infinite;
+  }
+
+  .field-rings span:nth-child(1) {
+    width: 32%;
+    height: 32%;
+  }
+
+  .field-rings span:nth-child(2) {
+    width: 52%;
+    height: 52%;
+    animation-delay: -1.2s;
+  }
+
+  .field-rings span:nth-child(3) {
+    width: 74%;
+    height: 74%;
+    animation-delay: -2.4s;
+  }
+
+  .field-rings span:nth-child(4) {
+    width: 100%;
+    height: 100%;
+    animation-delay: -3.6s;
+  }
+
+  @keyframes aether-float {
+    0%,
+    100% {
+      transform: translateY(0) scale(1);
+    }
+
+    50% {
+      transform: translateY(-14px) scale(1.015);
+    }
+  }
+
+  @keyframes aether-pulse {
+    0%,
+    100% {
+      opacity: 0.62;
+      transform: scale(0.96);
+    }
+
+    50% {
+      opacity: 1;
+      transform: scale(1.05);
+    }
+  }
+
+  @keyframes ring-breathe {
+    0%,
+    100% {
+      opacity: 0.35;
+      transform: translate(-50%, -50%) scale(0.96);
+    }
+
+    50% {
+      opacity: 0.82;
+      transform: translate(-50%, -50%) scale(1.04);
+    }
   }
 
   .eyebrow {
@@ -344,4 +545,43 @@ const principles = [
       font-size: 3.5rem;
     }
   }
+
+  @media (max-width: 980px) {
+    .hero {
+      grid-template-columns: 1fr;
+      padding-top: 100px;
+    }
+
+    .hero-visual {
+      min-height: 430px;
+    }
+
+    .aether-field {
+      width: min(100%, 460px);
+    }
+  }
+
+  @media (max-width: 560px) {
+    .hero {
+      padding-top: 72px;
+      gap: 30px;
+    }
+
+    .hero-visual {
+      min-height: 330px;
+    }
+
+    .hero-mark {
+      width: min(58%, 230px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-mark,
+    .field-glow,
+    .field-rings span {
+      animation: none;
+    }
+  }
+
 </style>
