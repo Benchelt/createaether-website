@@ -1,0 +1,266 @@
+---
+interface Props {
+  number: string;
+  title: string;
+  text: string;
+  icon: 'runtime' | 'visual' | 'api' | 'presets';
+  status: string;
+}
+
+const {
+  number,
+  title,
+  text,
+  icon,
+  status,
+} = Astro.props;
+---
+
+<article class="capability-card">
+  <div class="card-topline">
+    <span class="card-number">{number}</span>
+    <span class="card-status">{status}</span>
+  </div>
+
+  <div class="card-icon" aria-hidden="true">
+    {
+      icon === 'runtime' && (
+        <svg viewBox="0 0 48 48">
+          <rect x="9" y="9" width="30" height="30" rx="7"></rect>
+          <path d="M17 24h14"></path>
+          <path d="M24 17v14"></path>
+          <circle cx="24" cy="24" r="4"></circle>
+        </svg>
+      )
+    }
+
+    {
+      icon === 'visual' && (
+        <svg viewBox="0 0 48 48">
+          <path d="M24 8 39 17 24 26 9 17 24 8Z"></path>
+          <path d="m11 25 13 8 13-8"></path>
+          <path d="m14 33 10 6 10-6"></path>
+        </svg>
+      )
+    }
+
+    {
+      icon === 'api' && (
+        <svg viewBox="0 0 48 48">
+          <path d="m18 15-9 9 9 9"></path>
+          <path d="m30 15 9 9-9 9"></path>
+          <path d="m27 10-6 28"></path>
+        </svg>
+      )
+    }
+
+    {
+      icon === 'presets' && (
+        <svg viewBox="0 0 48 48">
+          <path d="M10 15h28"></path>
+          <path d="M10 24h28"></path>
+          <path d="M10 33h28"></path>
+          <circle cx="18" cy="15" r="3"></circle>
+          <circle cx="30" cy="24" r="3"></circle>
+          <circle cx="22" cy="33" r="3"></circle>
+        </svg>
+      )
+    }
+  </div>
+
+  <h3>{title}</h3>
+  <p>{text}</p>
+
+  <a href="#architecture" class="card-link">
+    Explore capability
+    <span aria-hidden="true">→</span>
+  </a>
+
+  <div class="card-glow" aria-hidden="true"></div>
+</article>
+
+<style>
+  .capability-card {
+    position: relative;
+    min-height: 330px;
+    padding: 28px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 22px;
+    background:
+      linear-gradient(
+        145deg,
+        rgba(255, 255, 255, 0.035),
+        rgba(255, 255, 255, 0.012)
+      );
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.04),
+      0 20px 55px rgba(0, 0, 0, 0.16);
+    transition:
+      transform 220ms ease,
+      border-color 220ms ease,
+      background 220ms ease,
+      box-shadow 220ms ease;
+  }
+
+  .capability-card:hover {
+    transform: translateY(-7px);
+    border-color: rgba(102, 227, 255, 0.3);
+    background:
+      linear-gradient(
+        145deg,
+        rgba(79, 124, 255, 0.075),
+        rgba(255, 255, 255, 0.018)
+      );
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.065),
+      0 30px 75px rgba(0, 0, 0, 0.28),
+      0 0 40px rgba(79, 124, 255, 0.08);
+  }
+
+  .card-topline {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+  }
+
+  .card-number {
+    color: #77829a;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+  }
+
+  .card-status {
+    padding: 6px 9px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 999px;
+    color: #8f9bb2;
+    background: rgba(255, 255, 255, 0.025);
+    font-size: 0.62rem;
+    white-space: nowrap;
+  }
+
+  .card-icon {
+    position: relative;
+    z-index: 2;
+    width: 54px;
+    height: 54px;
+    margin: 34px 0 30px;
+    display: grid;
+    place-items: center;
+    border: 1px solid rgba(102, 227, 255, 0.21);
+    border-radius: 15px;
+    background:
+      linear-gradient(
+        145deg,
+        rgba(102, 227, 255, 0.09),
+        rgba(79, 124, 255, 0.035)
+      );
+    color: #66e3ff;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.06),
+      0 0 25px rgba(102, 227, 255, 0.06);
+  }
+
+  .card-icon svg {
+    width: 28px;
+    height: 28px;
+    overflow: visible;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    filter: drop-shadow(0 0 8px rgba(102, 227, 255, 0.32));
+  }
+
+  h3 {
+    position: relative;
+    z-index: 2;
+    margin: 0 0 14px;
+    color: #f5f1ea;
+    font-size: 1.18rem;
+    letter-spacing: -0.025em;
+  }
+
+  p {
+    position: relative;
+    z-index: 2;
+    margin: 0;
+    color: #929aaa;
+    font-size: 0.92rem;
+    line-height: 1.7;
+  }
+
+  .card-link {
+    position: relative;
+    z-index: 2;
+    margin-top: auto;
+    padding-top: 28px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #b7c2d7;
+    font-size: 0.77rem;
+    font-weight: 650;
+    transition:
+      color 180ms ease,
+      gap 180ms ease;
+  }
+
+  .card-link span {
+    color: #66e3ff;
+  }
+
+  .card-link:hover {
+    gap: 12px;
+    color: #ffffff;
+  }
+
+  .card-link:focus-visible {
+    outline: 2px solid #66e3ff;
+    outline-offset: 5px;
+    border-radius: 3px;
+  }
+
+  .card-glow {
+    position: absolute;
+    right: -90px;
+    bottom: -100px;
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+    pointer-events: none;
+    opacity: 0;
+    background:
+      radial-gradient(
+        circle,
+        rgba(79, 124, 255, 0.16),
+        transparent 68%
+      );
+    filter: blur(12px);
+    transition: opacity 260ms ease;
+  }
+
+  .capability-card:hover .card-glow {
+    opacity: 1;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .capability-card,
+    .card-link,
+    .card-glow {
+      transition: none;
+    }
+
+    .capability-card:hover {
+      transform: none;
+    }
+  }
+</style>

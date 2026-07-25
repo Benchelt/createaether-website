@@ -1,22 +1,35 @@
 ---
 import ExperiencePanel from '../components/ExperiencePanel.astro';
+import CapabilityCard from '../components/CapabilityCard.astro';
 
-const principles = [
+const capabilities = [
   {
-    title: 'Modular by design',
-    text: 'Composable systems that can evolve without tightly coupling every feature.',
+    number: '01',
+    title: 'Experience Runtime',
+    text: 'A modular runtime that coordinates themes, ambience, user preferences and interactive behaviour through a consistent lifecycle.',
+    icon: 'runtime',
+    status: 'Core system',
   },
   {
-    title: 'Performance by default',
-    text: 'Immersive experiences should enhance a website without making it slow.',
+    number: '02',
+    title: 'Visual Systems',
+    text: 'Layered particles, responsive lighting, motion and atmospheric effects designed to remain expressive without sacrificing performance.',
+    icon: 'visual',
+    status: 'Live prototype',
   },
   {
-    title: 'Developer first',
-    text: 'Clear architecture, practical documentation and predictable behaviour.',
+    number: '03',
+    title: 'Developer API',
+    text: 'Predictable configuration, modular services and event-driven integration for developers building custom digital experiences.',
+    icon: 'api',
+    status: 'In development',
   },
   {
-    title: 'Built to grow',
-    text: 'A foundation for today’s engine and tomorrow’s platform services.',
+    number: '04',
+    title: 'Experience Presets',
+    text: 'Reusable Temple, Forest and Ocean profiles provide a foundation for custom themes, saved configurations and shareable experiences.',
+    icon: 'presets',
+    status: 'Prototype',
   },
 ];
 ---
@@ -52,7 +65,7 @@ const principles = [
 
       <nav aria-label="Primary navigation">
         <a href="#platform">Platform</a>
-        <a href="#principles">Principles</a>
+        <a href="#capabilities">Capabilities</a>
         <a
           href="https://github.com/Benchelt/createaether-website"
           target="_blank"
@@ -150,15 +163,50 @@ const principles = [
         </p>
       </section>
 
-      <section id="principles" class="principles">
-        {
-          principles.map((principle) => (
-            <article>
-              <h3>{principle.title}</h3>
-              <p>{principle.text}</p>
-            </article>
-          ))
-        }
+      <section
+        id="capabilities"
+        class="capabilities-section"
+        aria-labelledby="capabilities-title"
+      >
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Platform capabilities</p>
+
+            <h2 id="capabilities-title">
+              A modular foundation for immersive systems.
+            </h2>
+          </div>
+
+          <p>
+            Create Aether brings atmosphere, interaction and engineering
+            together as reusable platform capabilities rather than isolated
+            visual effects.
+          </p>
+        </div>
+
+        <div class="capability-grid">
+          {
+            capabilities.map((capability) => (
+              <CapabilityCard
+                number={capability.number}
+                title={capability.title}
+                text={capability.text}
+                icon={capability.icon}
+                status={capability.status}
+              />
+            ))
+          }
+        </div>
+      </section>
+
+      <section
+        id="architecture"
+        class="architecture-preview"
+        aria-label="Platform architecture preview"
+      >
+        <p>
+          Architecture documentation and developer examples are coming next.
+        </p>
       </section>
     </main>
 
@@ -504,30 +552,42 @@ const principles = [
     line-height: 1.8;
   }
 
-  .principles {
-    padding: 110px 0;
+  .capabilities-section {
+    padding: 120px 0 110px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .section-heading {
+    margin-bottom: 64px;
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+    align-items: end;
+    gap: clamp(44px, 7vw, 100px);
+  }
+
+  .section-heading > p {
+    margin: 0;
+    color: #9ba1ad;
+    font-size: 1.02rem;
+    line-height: 1.8;
+  }
+
+  .capability-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 18px;
   }
 
-  article {
-    min-height: 230px;
-    padding: 28px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 20px;
-    background: rgba(255, 255, 255, 0.025);
+  .architecture-preview {
+    padding: 28px 0;
+    color: #737c8e;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 0.76rem;
+    letter-spacing: 0.04em;
   }
 
-  h3 {
-    margin: 0 0 18px;
-    font-size: 1.1rem;
-  }
-
-  article p {
+  .architecture-preview p {
     margin: 0;
-    color: #989da8;
-    line-height: 1.7;
   }
 
   footer {
@@ -548,8 +608,12 @@ const principles = [
     }
 
     .platform,
-    .principles {
+    .section-heading {
       grid-template-columns: 1fr;
+    }
+
+    .capability-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
     .platform {
@@ -558,6 +622,19 @@ const principles = [
   }
 
   @media (max-width: 560px) {
+    .capability-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .capabilities-section {
+      padding: 90px 0 80px;
+    }
+
+    .section-heading {
+      margin-bottom: 42px;
+      gap: 28px;
+    }
+
     .site-header {
       align-items: flex-start;
     }
