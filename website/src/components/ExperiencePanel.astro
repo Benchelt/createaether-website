@@ -1,0 +1,834 @@
+<section
+  class="experience-panel"
+  aria-labelledby="experience-panel-title"
+>
+  <div class="panel-header">
+    <div>
+      <p class="panel-kicker">
+        <span class="panel-dot" aria-hidden="true"></span>
+        Interactive preview
+      </p>
+
+      <h2 id="experience-panel-title">Aether Console</h2>
+    </div>
+
+    <span class="panel-status" data-panel-status>Temple active</span>
+  </div>
+
+  <fieldset class="panel-group experience-selector">
+    <legend>Experience</legend>
+
+    <div class="experience-options">
+      <label class="experience-option">
+        <input
+          type="radio"
+          name="aether-experience"
+          value="temple"
+          checked
+        />
+
+        <span class="option-content">
+          <span class="option-icon" aria-hidden="true">◇</span>
+
+          <span>
+            <strong>Temple</strong>
+            <small>Focused and luminous</small>
+          </span>
+        </span>
+      </label>
+
+      <label class="experience-option">
+        <input
+          type="radio"
+          name="aether-experience"
+          value="forest"
+        />
+
+        <span class="option-content">
+          <span class="option-icon" aria-hidden="true">△</span>
+
+          <span>
+            <strong>Forest</strong>
+            <small>Organic and restorative</small>
+          </span>
+        </span>
+      </label>
+
+      <label class="experience-option">
+        <input
+          type="radio"
+          name="aether-experience"
+          value="ocean"
+        />
+
+        <span class="option-content">
+          <span class="option-icon" aria-hidden="true">≈</span>
+
+          <span>
+            <strong>Ocean</strong>
+            <small>Fluid and expansive</small>
+          </span>
+        </span>
+      </label>
+    </div>
+  </fieldset>
+
+  <div class="control-list">
+    <label class="switch-control">
+      <span>
+        <strong>Particles</strong>
+        <small>Atmospheric energy points</small>
+      </span>
+
+      <input
+        type="checkbox"
+        data-particles-control
+        checked
+      />
+
+      <span class="switch" aria-hidden="true">
+        <span></span>
+      </span>
+    </label>
+
+    <label class="switch-control">
+      <span>
+        <strong>Ambient glow</strong>
+        <small>Responsive environmental light</small>
+      </span>
+
+      <input
+        type="checkbox"
+        data-glow-control
+        checked
+      />
+
+      <span class="switch" aria-hidden="true">
+        <span></span>
+      </span>
+    </label>
+  </div>
+
+  <div class="intensity-control">
+    <div class="control-heading">
+      <label for="aether-intensity">Intensity</label>
+      <output for="aether-intensity" data-intensity-output>65%</output>
+    </div>
+
+    <input
+      id="aether-intensity"
+      type="range"
+      min="10"
+      max="100"
+      value="65"
+      step="1"
+      data-intensity-control
+    />
+
+    <div class="range-labels" aria-hidden="true">
+      <span>Subtle</span>
+      <span>Immersive</span>
+    </div>
+  </div>
+
+  <div class="panel-feedback" aria-live="polite">
+    <span class="feedback-indicator" aria-hidden="true"></span>
+    <span data-experience-feedback>
+      Temple experience is active.
+    </span>
+  </div>
+</section>
+
+<script>
+  type ExperienceName = 'temple' | 'forest' | 'ocean';
+
+  interface AetherState {
+    experience: ExperienceName;
+    particles: boolean;
+    glow: boolean;
+    intensity: number;
+  }
+
+  const STORAGE_KEY = 'create-aether-demo-state';
+
+  const experienceNames: Record<ExperienceName, string> = {
+    temple: 'Temple',
+    forest: 'Forest',
+    ocean: 'Ocean',
+  };
+
+  const defaultState: AetherState = {
+    experience: 'temple',
+    particles: true,
+    glow: true,
+    intensity: 65,
+  };
+
+  const hero = document.querySelector<HTMLElement>('[data-aether-demo]');
+  const panel = document.querySelector<HTMLElement>('.experience-panel');
+
+  const experienceInputs =
+    panel?.querySelectorAll<HTMLInputElement>(
+      'input[name="aether-experience"]'
+    );
+
+  const particlesControl =
+    panel?.querySelector<HTMLInputElement>('[data-particles-control]');
+
+  const glowControl =
+    panel?.querySelector<HTMLInputElement>('[data-glow-control]');
+
+  const intensityControl =
+    panel?.querySelector<HTMLInputElement>('[data-intensity-control]');
+
+  const intensityOutput =
+    panel?.querySelector<HTMLOutputElement>('[data-intensity-output]');
+
+  const feedback =
+    panel?.querySelector<HTMLElement>('[data-experience-feedback]');
+
+  const panelStatus =
+    panel?.querySelector<HTMLElement>('[data-panel-status]');
+
+  function isExperienceName(value: unknown): value is ExperienceName {
+    return value === 'temple' || value === 'forest' || value === 'ocean';
+  }
+
+  function loadState(): AetherState {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+
+      if (!saved) {
+        return { ...defaultState };
+      }
+
+      const parsed = JSON.parse(saved);
+
+      return {
+        experience: isExperienceName(parsed.experience)
+          ? parsed.experience
+          : defaultState.experience,
+        particles:
+          typeof parsed.particles === 'boolean'
+            ? parsed.particles
+            : defaultState.particles,
+        glow:
+          typeof parsed.glow === 'boolean'
+            ? parsed.glow
+            : defaultState.glow,
+        intensity:
+          typeof parsed.intensity === 'number'
+            ? Math.min(100, Math.max(10, parsed.intensity))
+            : defaultState.intensity,
+      };
+    } catch {
+      return { ...defaultState };
+    }
+  }
+
+  let state: AetherState = loadState();
+
+  function saveState(): void {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    } catch {
+      // The demo still works when local storage is unavailable.
+    }
+  }
+
+  function updateSliderProgress(value: number): void {
+    if (!intensityControl) {
+      return;
+    }
+
+    const minimum = Number(intensityControl.min);
+    const maximum = Number(intensityControl.max);
+    const progress = ((value - minimum) / (maximum - minimum)) * 100;
+
+    intensityControl.style.setProperty(
+      '--range-progress',
+      `${progress}%`
+    );
+  }
+
+  function applyState(announce = true): void {
+    if (!hero) {
+      return;
+    }
+
+    const power = state.intensity / 100;
+    const displayName = experienceNames[state.experience];
+
+    hero.dataset.experience = state.experience;
+    hero.dataset.particles = String(state.particles);
+    hero.dataset.glow = String(state.glow);
+    hero.style.setProperty('--aether-power', power.toFixed(2));
+
+    experienceInputs?.forEach((input) => {
+      input.checked = input.value === state.experience;
+    });
+
+    if (particlesControl) {
+      particlesControl.checked = state.particles;
+    }
+
+    if (glowControl) {
+      glowControl.checked = state.glow;
+    }
+
+    if (intensityControl) {
+      intensityControl.value = String(state.intensity);
+    }
+
+    if (intensityOutput) {
+      intensityOutput.value = `${state.intensity}%`;
+      intensityOutput.textContent = `${state.intensity}%`;
+    }
+
+    updateSliderProgress(state.intensity);
+
+    if (panelStatus) {
+      panelStatus.textContent = `${displayName} active`;
+    }
+
+    if (feedback && announce) {
+      feedback.textContent =
+        `${displayName} experience active at ` +
+        `${state.intensity}% intensity.`;
+    }
+
+    saveState();
+  }
+
+  function createParticles(): void {
+    const container =
+      hero?.querySelector<HTMLElement>('[data-aether-particles]');
+
+    if (!container || container.children.length > 0) {
+      return;
+    }
+
+    const particleCount = 26;
+
+    for (let index = 0; index < particleCount; index += 1) {
+      const particle = document.createElement('span');
+
+      const left = 5 + Math.random() * 90;
+      const top = 5 + Math.random() * 90;
+      const size = 2 + Math.random() * 3;
+      const delay = Math.random() * -12;
+      const duration = 7 + Math.random() * 9;
+      const drift = -18 + Math.random() * 36;
+
+      particle.style.setProperty('--particle-left', `${left}%`);
+      particle.style.setProperty('--particle-top', `${top}%`);
+      particle.style.setProperty('--particle-size', `${size}px`);
+      particle.style.setProperty('--particle-delay', `${delay}s`);
+      particle.style.setProperty('--particle-duration', `${duration}s`);
+      particle.style.setProperty('--particle-drift', `${drift}px`);
+
+      container.appendChild(particle);
+    }
+  }
+
+  experienceInputs?.forEach((input) => {
+    input.addEventListener('change', () => {
+      if (!isExperienceName(input.value)) {
+        return;
+      }
+
+      state = {
+        ...state,
+        experience: input.value,
+      };
+
+      applyState();
+    });
+  });
+
+  particlesControl?.addEventListener('change', () => {
+    state = {
+      ...state,
+      particles: particlesControl.checked,
+    };
+
+    applyState();
+  });
+
+  glowControl?.addEventListener('change', () => {
+    state = {
+      ...state,
+      glow: glowControl.checked,
+    };
+
+    applyState();
+  });
+
+  intensityControl?.addEventListener('input', () => {
+    state = {
+      ...state,
+      intensity: Number(intensityControl.value),
+    };
+
+    applyState(false);
+
+    if (feedback) {
+      feedback.textContent =
+        `${experienceNames[state.experience]} intensity: ` +
+        `${state.intensity}%.`;
+    }
+  });
+
+  createParticles();
+  applyState(false);
+</script>
+
+<style>
+  .experience-panel {
+    position: relative;
+    z-index: 5;
+    width: min(100%, 390px);
+    padding: 26px;
+    overflow: hidden;
+    border: 1px solid color-mix(
+      in srgb,
+      var(--aether-accent, #66e3ff) 34%,
+      transparent
+    );
+    border-radius: 22px;
+    background:
+      linear-gradient(
+        145deg,
+        rgba(24, 31, 52, 0.94),
+        rgba(12, 17, 30, 0.9)
+      );
+    box-shadow:
+      0 30px 80px rgba(0, 0, 0, 0.42),
+      0 0 42px color-mix(
+        in srgb,
+        var(--aether-accent, #66e3ff) 10%,
+        transparent
+      ),
+      inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(20px);
+    transition:
+      border-color 400ms ease,
+      box-shadow 400ms ease;
+  }
+
+  .experience-panel::before {
+    position: absolute;
+    top: -34px;
+    left: 50%;
+    width: 2px;
+    height: 48px;
+    content: "";
+    transform: translateX(-50%);
+    background:
+      linear-gradient(
+        to bottom,
+        transparent,
+        var(--aether-accent, #66e3ff)
+      );
+    box-shadow:
+      0 0 14px var(--aether-accent, #66e3ff),
+      0 0 34px var(--aether-secondary, #4f7cff);
+  }
+
+  .experience-panel::after {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    content: "";
+    pointer-events: none;
+    background:
+      radial-gradient(
+        circle at 50% 0%,
+        color-mix(
+          in srgb,
+          var(--aether-accent, #66e3ff) 12%,
+          transparent
+        ),
+        transparent 38%
+      );
+  }
+
+  .panel-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 18px;
+    margin-bottom: 26px;
+  }
+
+  .panel-kicker {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin: 0 0 7px;
+    color: #9ca9c4;
+    font-size: 0.7rem;
+    font-weight: 750;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .panel-dot {
+    width: 8px;
+    height: 8px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: var(--aether-accent, #66e3ff);
+    box-shadow:
+      0 0 10px var(--aether-accent, #66e3ff),
+      0 0 22px var(--aether-accent, #66e3ff);
+  }
+
+  .panel-header h2 {
+    margin: 0;
+    color: #f7f4ee;
+    font-size: 1.25rem;
+    line-height: 1.15;
+    letter-spacing: -0.025em;
+  }
+
+  .panel-status {
+    padding: 6px 9px;
+    flex-shrink: 0;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.035);
+    color: #aeb8cc;
+    font-size: 0.68rem;
+    white-space: nowrap;
+  }
+
+  .panel-group {
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .panel-group legend,
+  .control-heading label {
+    margin-bottom: 11px;
+    color: #d8deeb;
+    font-size: 0.78rem;
+    font-weight: 650;
+    letter-spacing: 0.04em;
+  }
+
+  .experience-options {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+
+  .experience-option {
+    position: relative;
+    cursor: pointer;
+  }
+
+  .experience-option input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    opacity: 0;
+  }
+
+  .option-content {
+    min-height: 104px;
+    padding: 13px 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 11px;
+    border: 1px solid rgba(255, 255, 255, 0.075);
+    border-radius: 13px;
+    background: rgba(255, 255, 255, 0.025);
+    transition:
+      transform 180ms ease,
+      border-color 180ms ease,
+      background 180ms ease,
+      box-shadow 180ms ease;
+  }
+
+  .experience-option:hover .option-content {
+    transform: translateY(-2px);
+    border-color: color-mix(
+      in srgb,
+      var(--aether-accent, #66e3ff) 38%,
+      transparent
+    );
+    background: rgba(255, 255, 255, 0.045);
+  }
+
+  .experience-option input:checked + .option-content {
+    border-color: color-mix(
+      in srgb,
+      var(--aether-accent, #66e3ff) 62%,
+      transparent
+    );
+    background:
+      linear-gradient(
+        145deg,
+        color-mix(
+          in srgb,
+          var(--aether-accent, #66e3ff) 14%,
+          transparent
+        ),
+        rgba(255, 255, 255, 0.025)
+      );
+    box-shadow:
+      inset 0 0 20px color-mix(
+        in srgb,
+        var(--aether-accent, #66e3ff) 7%,
+        transparent
+      ),
+      0 8px 24px rgba(0, 0, 0, 0.18);
+  }
+
+  .experience-option input:focus-visible + .option-content {
+    outline: 2px solid var(--aether-accent, #66e3ff);
+    outline-offset: 3px;
+  }
+
+  .option-icon {
+    color: var(--aether-accent, #66e3ff);
+    font-size: 1.2rem;
+    line-height: 1;
+    text-shadow: 0 0 12px var(--aether-accent, #66e3ff);
+  }
+
+  .option-content strong,
+  .option-content small {
+    display: block;
+  }
+
+  .option-content strong {
+    margin-bottom: 4px;
+    color: #f2f4f8;
+    font-size: 0.76rem;
+  }
+
+  .option-content small {
+    color: #8994aa;
+    font-size: 0.61rem;
+    line-height: 1.35;
+  }
+
+  .control-list {
+    margin: 22px 0;
+    display: grid;
+    gap: 10px;
+  }
+
+  .switch-control {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 12px 13px;
+    cursor: pointer;
+    border: 1px solid rgba(255, 255, 255, 0.065);
+    border-radius: 13px;
+    background: rgba(255, 255, 255, 0.022);
+  }
+
+  .switch-control > span:first-child {
+    min-width: 0;
+  }
+
+  .switch-control strong,
+  .switch-control small {
+    display: block;
+  }
+
+  .switch-control strong {
+    margin-bottom: 3px;
+    color: #dfe4ee;
+    font-size: 0.77rem;
+  }
+
+  .switch-control small {
+    color: #7f8ba2;
+    font-size: 0.66rem;
+  }
+
+  .switch-control input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    opacity: 0;
+  }
+
+  .switch {
+    position: relative;
+    width: 42px;
+    height: 24px;
+    flex-shrink: 0;
+    border: 1px solid rgba(255, 255, 255, 0.11);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    transition:
+      border-color 180ms ease,
+      background 180ms ease;
+  }
+
+  .switch span {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #8d96a8;
+    transition:
+      transform 180ms ease,
+      background 180ms ease,
+      box-shadow 180ms ease;
+  }
+
+  .switch-control input:checked + .switch {
+    border-color: color-mix(
+      in srgb,
+      var(--aether-accent, #66e3ff) 52%,
+      transparent
+    );
+    background: color-mix(
+      in srgb,
+      var(--aether-accent, #66e3ff) 22%,
+      transparent
+    );
+  }
+
+  .switch-control input:checked + .switch span {
+    transform: translateX(18px);
+    background: var(--aether-accent, #66e3ff);
+    box-shadow: 0 0 12px var(--aether-accent, #66e3ff);
+  }
+
+  .switch-control input:focus-visible + .switch {
+    outline: 2px solid var(--aether-accent, #66e3ff);
+    outline-offset: 3px;
+  }
+
+  .intensity-control {
+    margin-top: 4px;
+  }
+
+  .control-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .control-heading output {
+    color: var(--aether-accent, #66e3ff);
+    font-size: 0.74rem;
+    font-weight: 700;
+  }
+
+  input[type="range"] {
+    width: 100%;
+    height: 5px;
+    margin: 5px 0 8px;
+    cursor: pointer;
+    appearance: none;
+    border-radius: 999px;
+    background:
+      linear-gradient(
+        to right,
+        var(--aether-accent, #66e3ff)
+          var(--range-progress, 61%),
+        rgba(255, 255, 255, 0.1)
+          var(--range-progress, 61%)
+      );
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    width: 17px;
+    height: 17px;
+    appearance: none;
+    border: 3px solid #111827;
+    border-radius: 50%;
+    background: var(--aether-accent, #66e3ff);
+    box-shadow:
+      0 0 0 1px var(--aether-accent, #66e3ff),
+      0 0 14px var(--aether-accent, #66e3ff);
+  }
+
+  input[type="range"]::-moz-range-thumb {
+    width: 12px;
+    height: 12px;
+    border: 3px solid #111827;
+    border-radius: 50%;
+    background: var(--aether-accent, #66e3ff);
+    box-shadow:
+      0 0 0 1px var(--aether-accent, #66e3ff),
+      0 0 14px var(--aether-accent, #66e3ff);
+  }
+
+  input[type="range"]:focus-visible {
+    outline: 2px solid var(--aether-accent, #66e3ff);
+    outline-offset: 6px;
+  }
+
+  .range-labels {
+    display: flex;
+    justify-content: space-between;
+    color: #69758d;
+    font-size: 0.62rem;
+  }
+
+  .panel-feedback {
+    margin-top: 20px;
+    padding-top: 15px;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    border-top: 1px solid rgba(255, 255, 255, 0.065);
+    color: #96a2b8;
+    font-size: 0.68rem;
+  }
+
+  .feedback-indicator {
+    width: 6px;
+    height: 6px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: var(--aether-accent, #66e3ff);
+    box-shadow: 0 0 10px var(--aether-accent, #66e3ff);
+  }
+
+  @media (max-width: 430px) {
+    .experience-panel {
+      padding: 21px;
+    }
+
+    .experience-options {
+      grid-template-columns: 1fr;
+    }
+
+    .option-content {
+      min-height: auto;
+      flex-direction: row;
+      align-items: center;
+    }
+
+    .panel-status {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .option-content,
+    .switch,
+    .switch span {
+      transition: none;
+    }
+  }
+</style>

@@ -1,4 +1,6 @@
 ---
+import ExperiencePanel from '../components/ExperiencePanel.astro';
+
 const principles = [
   {
     title: 'Modular by design',
@@ -62,7 +64,20 @@ const principles = [
     </header>
 
     <main>
-      <section class="hero">
+      <section
+        class="hero"
+        data-aether-demo
+        data-experience="temple"
+        data-particles="true"
+        data-glow="true"
+      >
+        <div class="hero-grid" aria-hidden="true"></div>
+        <div
+          class="hero-particles"
+          data-aether-particles
+          aria-hidden="true"
+        ></div>
+
         <div class="hero-content">
           <p class="eyebrow">A modular experience platform</p>
 
@@ -92,8 +107,12 @@ const principles = [
           </div>
         </div>
 
-        <div class="hero-visual" aria-hidden="true">
-          <div class="aether-field">
+        <div class="hero-visual">
+          <p class="demo-label">
+            <span aria-hidden="true"></span>
+            Live Aether Demo
+          </p>
+          <div class="aether-field" aria-hidden="true">
             <div class="field-glow"></div>
 
             <div class="field-rings">
@@ -113,6 +132,8 @@ const principles = [
               height="320"
             />
           </div>
+
+          <ExperiencePanel />
         </div>
       </section>
 
@@ -249,18 +270,22 @@ const principles = [
 
   .hero-visual {
     position: relative;
-    min-height: 520px;
-    display: grid;
-    place-items: center;
+    min-height: 720px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
   }
 
   .aether-field {
     position: relative;
-    width: min(100%, 500px);
+    width: min(100%, 440px);
     aspect-ratio: 1;
     display: grid;
     place-items: center;
     isolation: isolate;
+    margin-bottom: -34px;
   }
 
   .field-glow {
@@ -581,6 +606,340 @@ const principles = [
     .field-glow,
     .field-rings span {
       animation: none;
+    }
+  }
+
+
+  /* AETHER INTERACTIVE DEMO */
+
+  .hero[data-aether-demo] {
+    --aether-accent: #66e3ff;
+    --aether-secondary: #6674ff;
+    --aether-deep: #281f78;
+    --aether-power: 0.65;
+
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    transition:
+      background-color 600ms ease,
+      border-color 600ms ease;
+  }
+
+  .hero[data-experience="temple"] {
+    --aether-accent: #8f83ff;
+    --aether-secondary: #4f7cff;
+    --aether-deep: #3927a4;
+  }
+
+  .hero[data-experience="forest"] {
+    --aether-accent: #62dfa6;
+    --aether-secondary: #9bcf68;
+    --aether-deep: #164f3b;
+  }
+
+  .hero[data-experience="ocean"] {
+    --aether-accent: #55ddff;
+    --aether-secondary: #3d83ff;
+    --aether-deep: #154d89;
+  }
+
+  .hero-grid {
+    position: absolute;
+    inset: 0;
+    z-index: -3;
+    pointer-events: none;
+    opacity: calc(0.12 + var(--aether-power) * 0.14);
+    background-image:
+      linear-gradient(
+        color-mix(
+          in srgb,
+          var(--aether-accent) 12%,
+          transparent
+        ) 1px,
+        transparent 1px
+      ),
+      linear-gradient(
+        90deg,
+        color-mix(
+          in srgb,
+          var(--aether-accent) 12%,
+          transparent
+        ) 1px,
+        transparent 1px
+      );
+    background-size: 64px 64px;
+    mask-image:
+      radial-gradient(
+        ellipse at 74% 42%,
+        black 0%,
+        rgba(0, 0, 0, 0.58) 42%,
+        transparent 74%
+      );
+    animation: aether-grid-drift 24s linear infinite;
+    transition: opacity 500ms ease;
+  }
+
+  .hero::before {
+    position: absolute;
+    inset: -15%;
+    z-index: -4;
+    content: "";
+    pointer-events: none;
+    opacity: calc(0.24 + var(--aether-power) * 0.54);
+    background:
+      radial-gradient(
+        circle at 78% 28%,
+        color-mix(
+          in srgb,
+          var(--aether-accent) 22%,
+          transparent
+        ),
+        transparent 27%
+      ),
+      radial-gradient(
+        circle at 90% 66%,
+        color-mix(
+          in srgb,
+          var(--aether-secondary) 11%,
+          transparent
+        ),
+        transparent 32%
+      );
+    filter: blur(16px);
+    transition:
+      opacity 500ms ease,
+      background 700ms ease;
+  }
+
+  .hero[data-glow="false"]::before,
+  .hero[data-glow="false"] .field-glow {
+    opacity: 0;
+  }
+
+  .hero-content {
+    z-index: 4;
+  }
+
+  .hero-visual {
+    z-index: 3;
+  }
+
+  .demo-label {
+    position: relative;
+    z-index: 6;
+    margin: 0 0 -28px;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    color: #aab5ca;
+    font-size: 0.68rem;
+    font-weight: 750;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .demo-label span {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--aether-accent);
+    box-shadow:
+      0 0 10px var(--aether-accent),
+      0 0 22px var(--aether-accent);
+  }
+
+  .field-glow {
+    opacity: calc(0.4 + var(--aether-power) * 0.6);
+    background:
+      radial-gradient(
+        circle,
+        color-mix(
+          in srgb,
+          var(--aether-accent) 30%,
+          transparent
+        ) 0%,
+        color-mix(
+          in srgb,
+          var(--aether-secondary) 18%,
+          transparent
+        ) 30%,
+        color-mix(
+          in srgb,
+          var(--aether-deep) 10%,
+          transparent
+        ) 54%,
+        transparent 73%
+      );
+    transition:
+      opacity 500ms ease,
+      background 650ms ease;
+  }
+
+  .hero-mark {
+    filter:
+      drop-shadow(
+        0 0 calc(12px + var(--aether-power) * 18px)
+        color-mix(
+          in srgb,
+          var(--aether-accent) 52%,
+          transparent
+        )
+      )
+      drop-shadow(
+        0 28px 45px
+        color-mix(
+          in srgb,
+          var(--aether-secondary) 29%,
+          transparent
+        )
+      );
+    animation-duration:
+      calc(9s - var(--aether-power) * 3s);
+    transition: filter 600ms ease;
+  }
+
+  .energy-line {
+    bottom: -30px;
+    background:
+      linear-gradient(
+        to bottom,
+        transparent,
+        var(--aether-accent),
+        var(--aether-secondary),
+        transparent
+      );
+    box-shadow:
+      0 0 12px var(--aether-accent),
+      0 0 30px var(--aether-secondary);
+    opacity: calc(0.42 + var(--aether-power) * 0.58);
+    transition:
+      background 600ms ease,
+      box-shadow 600ms ease,
+      opacity 400ms ease;
+  }
+
+  .field-rings span {
+    border-color:
+      color-mix(
+        in srgb,
+        var(--aether-secondary) 52%,
+        transparent
+      );
+    box-shadow:
+      0 0 18px
+      color-mix(
+        in srgb,
+        var(--aether-secondary) 18%,
+        transparent
+      );
+    animation-duration:
+      calc(8s - var(--aether-power) * 3s);
+    transition:
+      border-color 600ms ease,
+      box-shadow 600ms ease;
+  }
+
+  .hero-particles {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+    opacity: calc(0.22 + var(--aether-power) * 0.67);
+    mask-image:
+      radial-gradient(
+        ellipse at 75% 45%,
+        black,
+        transparent 77%
+      );
+    transition: opacity 450ms ease;
+  }
+
+  .hero-particles span {
+    position: absolute;
+    top: var(--particle-top);
+    left: var(--particle-left);
+    width: var(--particle-size);
+    height: var(--particle-size);
+    border-radius: 50%;
+    background: var(--aether-accent);
+    box-shadow:
+      0 0 8px var(--aether-accent),
+      0 0 16px var(--aether-secondary);
+    opacity: 0;
+    animation:
+      aether-particle-rise
+      var(--particle-duration)
+      ease-in-out
+      var(--particle-delay)
+      infinite;
+  }
+
+  .hero[data-particles="false"] .hero-particles {
+    opacity: 0;
+  }
+
+  @keyframes aether-grid-drift {
+    from {
+      transform: translate3d(0, 0, 0);
+    }
+
+    to {
+      transform: translate3d(64px, 64px, 0);
+    }
+  }
+
+  @keyframes aether-particle-rise {
+    0% {
+      opacity: 0;
+      transform: translate3d(0, 18px, 0) scale(0.75);
+    }
+
+    20% {
+      opacity: 0.72;
+    }
+
+    70% {
+      opacity: 0.35;
+    }
+
+    100% {
+      opacity: 0;
+      transform:
+        translate3d(
+          var(--particle-drift),
+          -90px,
+          0
+        )
+        scale(1.15);
+    }
+  }
+
+  @media (max-width: 980px) {
+    .demo-label {
+      margin-bottom: -12px;
+    }
+
+    .hero-grid {
+      mask-image:
+        linear-gradient(
+          to bottom,
+          transparent,
+          black 24%,
+          transparent
+        );
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-grid,
+    .hero-particles span {
+      animation: none;
+    }
+
+    .hero-particles {
+      display: none;
     }
   }
 
