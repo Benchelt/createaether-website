@@ -1,0 +1,60 @@
+---
+interface Props {
+  title: string;
+  value: string;
+  description?: string;
+}
+
+const {
+  title,
+  value,
+  description = "",
+} = Astro.props;
+---
+
+<div class="metric-card">
+    <div class="metric-title">{title}</div>
+
+    <div class="metric-value">{value}</div>
+
+    {description && (
+        <div class="metric-description">
+            {description}
+        </div>
+    )}
+</div>
+
+<style>
+.metric-card{
+    background:#10182c;
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:18px;
+    padding:24px;
+    transition:.25s ease;
+}
+
+.metric-card:hover{
+    transform:translateY(-4px);
+    border-color:#2fa8ff;
+}
+
+.metric-title{
+    font-size:.8rem;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:#6ea8d8;
+}
+
+.metric-value{
+    font-size:2.4rem;
+    font-weight:700;
+    margin-top:10px;
+    color:white;
+}
+
+.metric-description{
+    margin-top:10px;
+    color:#90a3b8;
+    font-size:.9rem;
+}
+</style>

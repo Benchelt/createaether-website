@@ -1,0 +1,307 @@
+---
+const navigation = [
+  { label: 'Dashboard', href: '/studio', active: true },
+  { label: 'Library', href: '/studio/library' },
+  { label: 'Modules', href: '/studio/modules' },
+  { label: 'Playground', href: '/studio/playground' },
+  { label: 'Marketplace', href: '/studio/marketplace' },
+];
+
+const secondaryNavigation = [
+  { label: 'Documentation', href: '/docs' },
+  { label: 'Settings', href: '/studio/settings' },
+];
+---
+
+<aside class="studio-sidebar">
+  <div class="studio-sidebar__brand">
+    <a href="/" aria-label="Create Aether home">
+      <span class="studio-sidebar__mark">A</span>
+
+      <span class="studio-sidebar__identity">
+        <strong>Create Aether</strong>
+        <small>Studio</small>
+      </span>
+    </a>
+  </div>
+
+  <div class="studio-sidebar__runtime">
+    <span class="studio-sidebar__runtime-indicator" aria-hidden="true"></span>
+
+    <span>
+      <strong>Runtime online</strong>
+      <small>All systems operational</small>
+    </span>
+  </div>
+
+  <nav class="studio-sidebar__navigation" aria-label="Studio navigation">
+    <p class="studio-sidebar__label">Workspace</p>
+
+    <ul>
+      {
+        navigation.map((item) => (
+          <li>
+            <a
+              href={item.href}
+              class:list={[
+                'studio-sidebar__link',
+                { 'studio-sidebar__link--active': item.active },
+              ]}
+              aria-current={item.active ? 'page' : undefined}
+            >
+              <span class="studio-sidebar__link-icon" aria-hidden="true"></span>
+              <span>{item.label}</span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+
+    <p class="studio-sidebar__label studio-sidebar__label--secondary">
+      Platform
+    </p>
+
+    <ul>
+      {
+        secondaryNavigation.map((item) => (
+          <li>
+            <a href={item.href} class="studio-sidebar__link">
+              <span class="studio-sidebar__link-icon" aria-hidden="true"></span>
+              <span>{item.label}</span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+
+  <div class="studio-sidebar__profile">
+    <span class="studio-sidebar__avatar">BR</span>
+
+    <span class="studio-sidebar__profile-details">
+      <strong>Ben Roberts</strong>
+      <small>Workspace owner</small>
+    </span>
+  </div>
+</aside>
+
+<style>
+  .studio-sidebar {
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: 20;
+    display: flex;
+    width: 17rem;
+    min-height: 100vh;
+    flex-direction: column;
+    border-right: 1px solid rgba(148, 163, 184, 0.14);
+    background:
+      radial-gradient(
+        circle at 0% 0%,
+        rgba(56, 189, 248, 0.08),
+        transparent 24rem
+      ),
+      rgba(6, 11, 22, 0.96);
+    padding: 1.5rem 1.25rem;
+    backdrop-filter: blur(18px);
+  }
+
+  .studio-sidebar__brand a {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .studio-sidebar__mark {
+    display: grid;
+    width: 2.65rem;
+    height: 2.65rem;
+    place-items: center;
+    border: 1px solid rgba(125, 211, 252, 0.28);
+    border-radius: 0.85rem;
+    background: rgba(14, 165, 233, 0.1);
+    box-shadow: 0 0 2rem rgba(14, 165, 233, 0.08);
+    color: #bae6fd;
+    font-weight: 700;
+  }
+
+  .studio-sidebar__identity {
+    display: grid;
+    gap: 0.15rem;
+  }
+
+  .studio-sidebar__identity strong {
+    color: #f8fafc;
+    font-size: 0.92rem;
+    letter-spacing: -0.01em;
+  }
+
+  .studio-sidebar__identity small {
+    color: #64748b;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .studio-sidebar__runtime {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin-top: 2rem;
+    border: 1px solid rgba(34, 197, 94, 0.13);
+    border-radius: 0.9rem;
+    background: rgba(15, 23, 42, 0.6);
+    padding: 0.85rem;
+  }
+
+  .studio-sidebar__runtime-indicator {
+    width: 0.55rem;
+    height: 0.55rem;
+    flex: 0 0 auto;
+    border-radius: 999px;
+    background: #4ade80;
+    box-shadow: 0 0 0.8rem rgba(74, 222, 128, 0.7);
+  }
+
+  .studio-sidebar__runtime span:last-child {
+    display: grid;
+    gap: 0.12rem;
+  }
+
+  .studio-sidebar__runtime strong {
+    color: #dcfce7;
+    font-size: 0.76rem;
+    font-weight: 600;
+  }
+
+  .studio-sidebar__runtime small {
+    color: #64748b;
+    font-size: 0.67rem;
+  }
+
+  .studio-sidebar__navigation {
+    margin-top: 2rem;
+  }
+
+  .studio-sidebar__label {
+    margin: 0 0 0.65rem;
+    padding-inline: 0.75rem;
+    color: #475569;
+    font-size: 0.67rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .studio-sidebar__label--secondary {
+    margin-top: 1.75rem;
+  }
+
+  .studio-sidebar__navigation ul {
+    display: grid;
+    gap: 0.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .studio-sidebar__link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    border: 1px solid transparent;
+    border-radius: 0.75rem;
+    padding: 0.72rem 0.75rem;
+    color: #94a3b8;
+    font-size: 0.82rem;
+    text-decoration: none;
+    transition:
+      border-color 160ms ease,
+      background 160ms ease,
+      color 160ms ease,
+      transform 160ms ease;
+  }
+
+  .studio-sidebar__link:hover {
+    border-color: rgba(125, 211, 252, 0.12);
+    background: rgba(30, 41, 59, 0.5);
+    color: #e2e8f0;
+    transform: translateX(0.15rem);
+  }
+
+  .studio-sidebar__link--active {
+    border-color: rgba(56, 189, 248, 0.2);
+    background: linear-gradient(
+      90deg,
+      rgba(14, 165, 233, 0.14),
+      rgba(14, 165, 233, 0.03)
+    );
+    color: #e0f2fe;
+  }
+
+  .studio-sidebar__link-icon {
+    width: 0.42rem;
+    height: 0.42rem;
+    border: 1px solid currentColor;
+    border-radius: 0.15rem;
+    opacity: 0.65;
+  }
+
+  .studio-sidebar__link--active .studio-sidebar__link-icon {
+    background: #38bdf8;
+    box-shadow: 0 0 0.65rem rgba(56, 189, 248, 0.55);
+    opacity: 1;
+  }
+
+  .studio-sidebar__profile {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: auto;
+    border-top: 1px solid rgba(148, 163, 184, 0.1);
+    padding: 1.2rem 0.35rem 0;
+  }
+
+  .studio-sidebar__avatar {
+    display: grid;
+    width: 2.35rem;
+    height: 2.35rem;
+    place-items: center;
+    border: 1px solid rgba(125, 211, 252, 0.18);
+    border-radius: 0.75rem;
+    background: rgba(30, 41, 59, 0.8);
+    color: #bae6fd;
+    font-size: 0.7rem;
+    font-weight: 700;
+  }
+
+  .studio-sidebar__profile-details {
+    display: grid;
+    gap: 0.1rem;
+  }
+
+  .studio-sidebar__profile-details strong {
+    color: #cbd5e1;
+    font-size: 0.76rem;
+  }
+
+  .studio-sidebar__profile-details small {
+    color: #475569;
+    font-size: 0.67rem;
+  }
+
+  @media (max-width: 900px) {
+    .studio-sidebar {
+      position: relative;
+      width: auto;
+      min-height: auto;
+    }
+
+    .studio-sidebar__navigation,
+    .studio-sidebar__profile {
+      display: none;
+    }
+  }
+</style>
