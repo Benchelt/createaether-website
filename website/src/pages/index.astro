@@ -1,6 +1,7 @@
 ---
 import ExperiencePanel from '../components/ExperiencePanel.astro';
 import CapabilityCard from '../components/CapabilityCard.astro';
+import ArchitectureFlow from '../components/ArchitectureFlow.astro';
 
 const capabilities = [
   {
@@ -199,15 +200,7 @@ const capabilities = [
         </div>
       </section>
 
-      <section
-        id="architecture"
-        class="architecture-preview"
-        aria-label="Platform architecture preview"
-      >
-        <p>
-          Architecture documentation and developer examples are coming next.
-        </p>
-      </section>
+      <ArchitectureFlow />
     </main>
 
     <footer>
@@ -576,18 +569,6 @@ const capabilities = [
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 18px;
-  }
-
-  .architecture-preview {
-    padding: 28px 0;
-    color: #737c8e;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    font-size: 0.76rem;
-    letter-spacing: 0.04em;
-  }
-
-  .architecture-preview p {
-    margin: 0;
   }
 
   footer {
