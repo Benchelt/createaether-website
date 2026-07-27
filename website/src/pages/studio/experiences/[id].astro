@@ -69,6 +69,25 @@ const { experience } = Astro.props;
                 </div>
             </div>
 
+            <div class="audio-transport">
+                <div>
+                    <p class="panel-label">Runtime Soundscape</p>
+                    <h3>OM SO HUM</h3>
+                    <span id="audio-playback-status">
+                        Ready to play
+                    </span>
+                </div>
+
+                <button
+                    type="button"
+                    id="audio-playback-toggle"
+                    class="button-secondary"
+                    aria-pressed="false"
+                >
+                    Play Soundscape
+                </button>
+            </div>
+
             <div class="preview-features">
                 <span id="audio-status">Audio enabled</span>
                 <span id="particles-status">Particles active</span>
@@ -481,10 +500,44 @@ const { experience } = Astro.props;
     font-weight:700;
 }
 
+.audio-transport{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:1rem;
+    margin-top:1.25rem;
+    padding:1rem;
+    border:1px solid rgba(125,211,252,.18);
+    border-radius:14px;
+    background:rgba(15,23,42,.55);
+}
+
+.audio-transport h3{
+    margin:.15rem 0;
+    font-size:1rem;
+}
+
+.audio-transport span{
+    color:#94a3b8;
+    font-size:.82rem;
+}
+
+.audio-transport button{
+    flex-shrink:0;
+}
+
+@media (max-width:640px){
+    .audio-transport{
+        align-items:flex-start;
+        flex-direction:column;
+    }
+}
+
 </style>
 
 <audio
     id="experience-audio"
+    src="/audio/om-so-hum.mp3"
     preload="metadata"
     loop
     hidden
@@ -505,6 +558,12 @@ const { experience } = Astro.props;
 
     const previewStage = document.querySelector('.preview-stage');
     const audioElement = document.querySelector('#experience-audio');
+
+    const audioPlaybackToggle =
+        document.querySelector('#audio-playback-toggle');
+
+    const audioPlaybackStatus =
+        document.querySelector('#audio-playback-status');
 
     const particlesStatus = document.querySelector('#particles-status');
     const lightingStatus = document.querySelector('#lighting-status');
@@ -564,6 +623,71 @@ const { experience } = Astro.props;
         fogToggle.addEventListener('change', () => {
             experienceState.update();
         });
+    }
+
+    if (
+        audioElement instanceof HTMLAudioElement &&
+        audioPlaybackToggle instanceof HTMLButtonElement
+    ) {
+        const updateAudioTransport = () => {
+            const isPlaying = !audioElement.paused;
+
+            audioPlaybackToggle.textContent =
+                isPlaying
+                    ? 'Pause Soundscape'
+                    : 'Play Soundscape';
+
+            audioPlaybackToggle.setAttribute(
+                'aria-pressed',
+                String(isPlaying)
+            );
+
+            if (audioPlaybackStatus instanceof HTMLElement) {
+                audioPlaybackStatus.textContent =
+                    isPlaying
+                        ? 'Playing in runtime preview'
+                        : 'Ready to play';
+            }
+        };
+
+        audioPlaybackToggle.addEventListener(
+            'click',
+            async () => {
+                if (!audioElement.paused) {
+                    audioElement.pause();
+                    return;
+                }
+
+                try {
+                    await audioElement.play();
+                } catch (error) {
+                    console.error(
+                        'Unable to start the soundscape.',
+                        error
+                    );
+
+                    if (
+                        audioPlaybackStatus
+                        instanceof HTMLElement
+                    ) {
+                        audioPlaybackStatus.textContent =
+                            'Playback could not start';
+                    }
+                }
+            }
+        );
+
+        audioElement.addEventListener(
+            'play',
+            updateAudioTransport
+        );
+
+        audioElement.addEventListener(
+            'pause',
+            updateAudioTransport
+        );
+
+        updateAudioTransport();
     }
 
     experienceState.initialise();

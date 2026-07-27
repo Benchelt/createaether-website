@@ -14,23 +14,23 @@ const capabilities = [
   {
     number: '02',
     title: 'Visual Systems',
-    text: 'Layered particles, responsive lighting, motion and atmospheric effects designed to remain expressive without sacrificing performance.',
+    text: 'Live particles, responsive lighting, fog and atmospheric effects connected directly to the runtime preview.',
     icon: 'visual',
-    status: 'Live prototype',
+    status: 'Runtime ready',
   },
   {
     number: '03',
     title: 'Developer API',
-    text: 'Predictable configuration, modular services and event-driven integration for developers building custom digital experiences.',
+    text: 'Typed state, modular runtime systems and predictable lifecycle integration for building custom digital experiences.',
     icon: 'api',
-    status: 'In development',
+    status: 'Active foundation',
   },
   {
     number: '04',
     title: 'Experience Presets',
-    text: 'Reusable Temple, Forest and Ocean profiles provide a foundation for custom themes, saved configurations and shareable experiences.',
+    text: 'Reusable Temple, Forest and Ocean experiences provide editable foundations for audio, atmosphere and runtime configuration.',
     icon: 'presets',
-    status: 'Prototype',
+    status: 'Studio available',
   },
 ];
 ---
@@ -66,6 +66,7 @@ const capabilities = [
 
       <nav aria-label="Primary navigation">
         <a href="#platform">Platform</a>
+        <a href="/studio/">Studio</a>
         <a href="#capabilities">Capabilities</a>
         <a
           href="https://github.com/Benchelt/createaether-website"
@@ -98,19 +99,18 @@ const capabilities = [
           <h1>Build immersive digital experiences.</h1>
 
           <p class="hero-copy">
-            Build rich interactive environments with a modular runtime for
-            atmosphere, visual systems and immersive user experiences.
+            Create, configure and preview immersive environments through a
+            modular Studio with runtime audio, atmospheric visuals and reusable
+            experience systems.
           </p>
 
           <div class="actions">
-            <a class="button primary" href="#platform">Get Started</a>
-            <a
-              class="button secondary"
-              href="https://github.com/Benchelt/createaether-website"
-              target="_blank"
-              rel="noreferrer"
-            >
-              View Source
+            <a class="button primary" href="/studio/">
+              Launch Studio
+            </a>
+
+            <a class="button secondary" href="#platform">
+              Explore Platform
             </a>
           </div>
 
@@ -119,8 +119,8 @@ const capabilities = [
               <i aria-hidden="true"></i>
               Runtime Online
             </span>
-            <span>Astro 7</span>
-            <span>Developer Preview</span>
+            <span>Studio Online</span>
+            <span>Audio Engine Active</span>
             <span>Open Source</span>
           </div>
         </div>
@@ -166,6 +166,65 @@ const capabilities = [
           coordinate audio, visual effects, contextual behaviour and
           user-controlled ambience.
         </p>
+      </section>
+
+      <section
+        id="workflow"
+        class="workflow-section"
+        aria-labelledby="workflow-title"
+      >
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Studio workflow</p>
+
+            <h2 id="workflow-title">
+              From idea to live experience.
+            </h2>
+          </div>
+
+          <p>
+            Create Aether connects experience configuration, runtime systems
+            and live preview through one focused Studio workflow.
+          </p>
+        </div>
+
+        <div class="workflow-grid">
+          <article class="workflow-step">
+            <span>01</span>
+            <h3>Create</h3>
+            <p>
+              Start with a Temple, Forest or Ocean experience.
+            </p>
+          </article>
+
+          <article class="workflow-step">
+            <span>02</span>
+            <h3>Configure</h3>
+            <p>
+              Adjust audio, lighting, particles, fog and runtime behaviour.
+            </p>
+          </article>
+
+          <article class="workflow-step">
+            <span>03</span>
+            <h3>Preview</h3>
+            <p>
+              Test the experience through the live visual and audio runtime.
+            </p>
+          </article>
+
+          <article class="workflow-step">
+            <span>04</span>
+            <h3>Publish</h3>
+            <p>
+              Prepare the experience for deployment and sharing.
+            </p>
+          </article>
+        </div>
+
+        <a class="workflow-link" href="/studio/">
+          Open Create Aether Studio →
+        </a>
       </section>
 
       <section
@@ -583,6 +642,54 @@ const capabilities = [
     line-height: 1.8;
   }
 
+  .workflow-section {
+    padding: 120px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .workflow-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px;
+  }
+
+  .workflow-step {
+    min-height: 220px;
+    padding: 28px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 22px;
+    background: rgba(255, 255, 255, 0.025);
+  }
+
+  .workflow-step span {
+    color: #66e3ff;
+    font-size: 0.76rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+  }
+
+  .workflow-step h3 {
+    margin: 42px 0 14px;
+    font-size: 1.45rem;
+  }
+
+  .workflow-step p {
+    margin: 0;
+    color: #9ba1ad;
+    line-height: 1.7;
+  }
+
+  .workflow-link {
+    margin-top: 34px;
+    display: inline-flex;
+    color: #66e3ff;
+    font-weight: 700;
+  }
+
+  .workflow-link:hover {
+    color: #ffffff;
+  }
+
   .capabilities-section {
     padding: 120px 0 110px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
@@ -617,6 +724,10 @@ const capabilities = [
   }
 
   @media (max-width: 800px) {
+    .workflow-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+
     nav {
       gap: 16px;
     }
