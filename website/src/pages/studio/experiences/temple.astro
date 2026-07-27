@@ -34,8 +34,18 @@ Meditative temple environment with ambient audio and lighting.
                 Enable Audio
             </label>
 
-            <label>Volume</label>
-            <input type="range" value="40" />
+            <div class="volume-heading">
+                <label for="volume-control">Volume</label>
+                <output id="volume-value" for="volume-control">40%</output>
+            </div>
+
+            <input
+                id="volume-control"
+                type="range"
+                min="0"
+                max="100"
+                value="40"
+            />
         </div>
 
         <div class="panel">
@@ -456,6 +466,40 @@ Meditative temple environment with ambient audio and lighting.
     }
 }
 
+
+.volume-heading{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:1rem;
+    margin-top:1rem;
+    margin-bottom:.5rem;
+}
+
+.volume-heading label{
+    margin:0;
+}
+
+.volume-heading output{
+    color:#7dd3fc;
+    font-size:.82rem;
+    font-weight:700;
+}
+
 </style>
+
+<script>
+    const volumeControl = document.querySelector('#volume-control');
+    const volumeValue = document.querySelector('#volume-value');
+
+    if (
+        volumeControl instanceof HTMLInputElement &&
+        volumeValue instanceof HTMLOutputElement
+    ) {
+        volumeControl.addEventListener('input', () => {
+            volumeValue.value = `${volumeControl.value}%`;
+        });
+    }
+</script>
 
 </StudioLayout>
