@@ -1,6 +1,8 @@
 ---
 import StudioLayout from '../../../layouts/StudioLayout.astro';
 import GeneralPanel from '../../../components/studio/GeneralPanel.astro';
+import AudioPanel from '../../../components/studio/AudioPanel.astro';
+import AtmospherePanel from '../../../components/studio/AtmospherePanel.astro';
 import { experiences } from '../../../data/experiences';
 
 export function getStaticPaths() {
@@ -31,40 +33,9 @@ const { experience } = Astro.props;
 
         <GeneralPanel experience={experience} />
 
-        <div class="panel">
-            <h2>Audio</h2>
+        <AudioPanel experience={experience} />
 
-            <label>
-                <input type="checkbox" checked={experience.audio.enabled} />
-                Enable Audio
-            </label>
-
-            <div class="volume-heading">
-                <label for="volume-control">Volume</label>
-                <output id="volume-value" for="volume-control">{experience.audio.volume}%</output>
-            </div>
-
-            <input
-                id="volume-control"
-                type="range"
-                min="0"
-                max="100"
-                value={experience.audio.volume}
-            />
-        </div>
-
-        <div class="panel">
-            <h2>Atmosphere</h2>
-
-            <label>Particles</label>
-            <input id="particles-toggle" type="checkbox" checked={experience.atmosphere.particles} />
-
-            <label>Lighting</label>
-            <input id="lighting-toggle" type="checkbox" checked={experience.atmosphere.lighting} />
-
-            <label>Fog</label>
-            <input id="fog-toggle" type="checkbox" checked={experience.atmosphere.fog} />
-        </div>
+        <AtmospherePanel experience={experience} />
 
         <div class="panel preview-panel">
             <div class="preview-header">

@@ -1,0 +1,78 @@
+---
+const { experience } = Astro.props;
+---
+
+<div class="panel">
+    <h2>Atmosphere</h2>
+
+    <div class="control-row">
+        <label for="particles-toggle">
+            Particles
+        </label>
+
+        <input
+            id="particles-toggle"
+            type="checkbox"
+            checked={experience.atmosphere.particles}
+        />
+    </div>
+
+    <div class="control-row">
+        <label for="lighting-toggle">
+            Lighting
+        </label>
+
+        <input
+            id="lighting-toggle"
+            type="checkbox"
+            checked={experience.atmosphere.lighting}
+        />
+    </div>
+
+    <div class="control-row">
+        <label for="fog-toggle">
+            Fog
+        </label>
+
+        <input
+            id="fog-toggle"
+            type="checkbox"
+            checked={experience.atmosphere.fog}
+        />
+    </div>
+</div>
+
+<style>
+.panel{
+    background:#10182c;
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:18px;
+    padding:1.5rem;
+}
+
+.panel h2{
+    margin-top:0;
+}
+
+.control-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:1rem;
+    padding:.85rem 0;
+    border-bottom:1px solid rgba(255,255,255,.06);
+}
+
+.control-row:last-child{
+    border-bottom:none;
+}
+
+.control-row label{
+    margin:0;
+}
+
+.control-row input{
+    width:auto;
+    margin:0;
+}
+</style>

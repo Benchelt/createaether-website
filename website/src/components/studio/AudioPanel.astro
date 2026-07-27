@@ -1,0 +1,85 @@
+---
+const { experience } = Astro.props;
+---
+
+<div class="panel">
+    <h2>Audio</h2>
+
+    <label for="audio-enabled">
+        Enable Audio
+    </label>
+
+    <input
+        id="audio-enabled"
+        type="checkbox"
+        checked={experience.audio.enabled}
+    />
+
+    <div class="volume-heading">
+        <label for="volume-control">
+            Volume
+        </label>
+
+        <output
+            id="volume-value"
+            for="volume-control"
+        >
+            {experience.audio.volume}%
+        </output>
+    </div>
+
+    <input
+        id="volume-control"
+        type="range"
+        min="0"
+        max="100"
+        value={experience.audio.volume}
+    />
+</div>
+
+<style>
+.panel{
+    background:#10182c;
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:18px;
+    padding:1.5rem;
+}
+
+.panel h2{
+    margin-top:0;
+}
+
+.panel label{
+    display:block;
+    margin-top:1rem;
+    margin-bottom:.5rem;
+}
+
+.panel input{
+    width:100%;
+    box-sizing:border-box;
+    padding:.75rem;
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:8px;
+    background:#172036;
+    color:white;
+}
+
+.panel input[type="checkbox"]{
+    width:auto;
+    padding:0;
+}
+
+.volume-heading{
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+    gap:1rem;
+}
+
+.volume-heading output{
+    color:#7dd3fc;
+    font-size:.8rem;
+    font-weight:700;
+}
+</style>
