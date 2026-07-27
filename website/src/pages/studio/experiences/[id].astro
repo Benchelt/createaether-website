@@ -67,10 +67,10 @@ const { experience } = Astro.props;
             <input id="particles-toggle" type="checkbox" checked={experience.atmosphere.particles} />
 
             <label>Lighting</label>
-            <input type="checkbox" checked={experience.atmosphere.lighting} />
+            <input id="lighting-toggle" type="checkbox" checked={experience.atmosphere.lighting} />
 
             <label>Fog</label>
-            <input type="checkbox" checked={experience.atmosphere.fog} />
+            <input id="fog-toggle" type="checkbox" checked={experience.atmosphere.fog} />
         </div>
 
         <div class="panel preview-panel">
@@ -306,6 +306,20 @@ const { experience } = Astro.props;
     display:none;
 }
 
+.preview-stage--lighting-disabled .preview-glow{
+    display:none;
+}
+
+.preview-stage--lighting-disabled .preview-orb{
+    background:#172033;
+    border-color:rgba(148,163,184,.25);
+    box-shadow:none;
+}
+
+.preview-stage--fog-disabled .preview-fog{
+    display:none;
+}
+
 .preview-particle{
     position:absolute;
     width:5px;
@@ -509,6 +523,8 @@ const { experience } = Astro.props;
     const volumeValue = document.querySelector('#volume-value');
 
     const particlesToggle = document.querySelector('#particles-toggle');
+    const lightingToggle = document.querySelector('#lighting-toggle');
+    const fogToggle = document.querySelector('#fog-toggle');
     const previewStage = document.querySelector('.preview-stage');
 
     const Preview = {
@@ -534,9 +550,35 @@ const { experience } = Astro.props;
             }
         },
 
+        updateLighting() {
+            if (
+                lightingToggle instanceof HTMLInputElement &&
+                previewStage instanceof HTMLElement
+            ) {
+                previewStage.classList.toggle(
+                    'preview-stage--lighting-disabled',
+                    !lightingToggle.checked
+                );
+            }
+        },
+
+        updateFog() {
+            if (
+                fogToggle instanceof HTMLInputElement &&
+                previewStage instanceof HTMLElement
+            ) {
+                previewStage.classList.toggle(
+                    'preview-stage--fog-disabled',
+                    !fogToggle.checked
+                );
+            }
+        },
+
         update() {
             this.updateVolume();
             this.updateParticles();
+            this.updateLighting();
+            this.updateFog();
         },
 
         initialise() {
@@ -551,6 +593,18 @@ const { experience } = Astro.props;
             if (particlesToggle instanceof HTMLInputElement) {
                 particlesToggle.addEventListener('change', () => {
                     this.updateParticles();
+                });
+            }
+
+            if (lightingToggle instanceof HTMLInputElement) {
+                lightingToggle.addEventListener('change', () => {
+                    this.updateLighting();
+                });
+            }
+
+            if (fogToggle instanceof HTMLInputElement) {
+                fogToggle.addEventListener('change', () => {
+                    this.updateFog();
                 });
             }
         }
