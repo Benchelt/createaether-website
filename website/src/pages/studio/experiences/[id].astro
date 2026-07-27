@@ -483,9 +483,17 @@ const { experience } = Astro.props;
 
 </style>
 
+<audio
+    id="experience-audio"
+    preload="metadata"
+    loop
+    hidden
+></audio>
+
 <script>
     import { ExperienceState } from '../../../lib/ExperienceState';
     import { ExperienceRuntime } from '../../../lib/ExperienceRuntime';
+    import { AudioSystem } from '../../../lib/systems/AudioSystem';
     import { PreviewController } from '../../../components/studio/PreviewController';
 
     const volumeControl = document.querySelector('#volume-control');
@@ -496,6 +504,7 @@ const { experience } = Astro.props;
     const fogToggle = document.querySelector('#fog-toggle');
 
     const previewStage = document.querySelector('.preview-stage');
+    const audioElement = document.querySelector('#experience-audio');
 
     const particlesStatus = document.querySelector('#particles-status');
     const lightingStatus = document.querySelector('#lighting-status');
@@ -511,8 +520,16 @@ const { experience } = Astro.props;
 
     const experienceRuntime = new ExperienceRuntime();
 
+    const audioSystem = new AudioSystem(
+        audioElement
+    );
+
     experienceRuntime.register(
-        (state) => previewController.render(state)
+        previewController
+    );
+
+    experienceRuntime.register(
+        audioSystem
     );
 
     const experienceState = new ExperienceState(

@@ -2,6 +2,10 @@ import type {
     ExperienceStateData
 } from '../../lib/ExperienceState';
 
+import type {
+    ExperienceRuntimeSystem
+} from '../../lib/ExperienceRuntime';
+
 export interface PreviewElements {
     volumeValue: Element | null;
     previewStage: Element | null;
@@ -10,7 +14,8 @@ export interface PreviewElements {
     fogStatus: Element | null;
 }
 
-export class PreviewController {
+export class PreviewController
+    implements ExperienceRuntimeSystem {
     private readonly elements: PreviewElements;
 
     constructor(elements: PreviewElements) {
@@ -96,7 +101,7 @@ export class PreviewController {
         }
     }
 
-    public render(state: ExperienceStateData): void {
+    public update(state: ExperienceStateData): void {
         this.updateVolume(state);
         this.updateParticles(state);
         this.updateLighting(state);

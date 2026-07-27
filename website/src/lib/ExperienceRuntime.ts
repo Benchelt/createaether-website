@@ -2,9 +2,9 @@ import type {
     ExperienceStateData
 } from './ExperienceState';
 
-export type ExperienceRuntimeSystem = (
-    state: ExperienceStateData
-) => void;
+export interface ExperienceRuntimeSystem {
+    update(state: ExperienceStateData): void;
+}
 
 export class ExperienceRuntime {
     private readonly systems =
@@ -21,9 +21,12 @@ export class ExperienceRuntime {
     public register(
         system: ExperienceRuntimeSystem
     ): () => void {
-        if (typeof system !== 'function') {
+        if (
+            !system ||
+            typeof system.update !== 'function'
+        ) {
             throw new TypeError(
-                'Experience runtime systems must be functions.'
+                'Experience runtime systems must provide an update method.'
             );
         }
 
@@ -36,7 +39,7 @@ export class ExperienceRuntime {
 
     public update(state: ExperienceStateData): void {
         this.systems.forEach((system) => {
-            system(state);
+            system.update(state);
         });
     }
 
