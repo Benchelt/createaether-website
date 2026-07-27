@@ -64,7 +64,7 @@ const { experience } = Astro.props;
             <h2>Atmosphere</h2>
 
             <label>Particles</label>
-            <input type="checkbox" checked={experience.atmosphere.particles} />
+            <input id="particles-toggle" type="checkbox" checked={experience.atmosphere.particles} />
 
             <label>Lighting</label>
             <input type="checkbox" checked={experience.atmosphere.lighting} />
@@ -302,6 +302,10 @@ const { experience } = Astro.props;
     animation:preview-float 5s ease-in-out infinite;
 }
 
+.preview-stage--particles-disabled .preview-particle{
+    display:none;
+}
+
 .preview-particle{
     position:absolute;
     width:5px;
@@ -504,14 +508,55 @@ const { experience } = Astro.props;
     const volumeControl = document.querySelector('#volume-control');
     const volumeValue = document.querySelector('#volume-value');
 
-    if (
-        volumeControl instanceof HTMLInputElement &&
-        volumeValue instanceof HTMLOutputElement
-    ) {
-        volumeControl.addEventListener('input', () => {
-            volumeValue.value = `${volumeControl.value}%`;
-        });
-    }
+    const particlesToggle = document.querySelector('#particles-toggle');
+    const previewStage = document.querySelector('.preview-stage');
+
+    const Preview = {
+
+        updateVolume() {
+            if (
+                volumeControl instanceof HTMLInputElement &&
+                volumeValue instanceof HTMLOutputElement
+            ) {
+                volumeValue.value = `${volumeControl.value}%`;
+            }
+        },
+
+        updateParticles() {
+            if (
+                particlesToggle instanceof HTMLInputElement &&
+                previewStage instanceof HTMLElement
+            ) {
+                previewStage.classList.toggle(
+                    'preview-stage--particles-disabled',
+                    !particlesToggle.checked
+                );
+            }
+        },
+
+        update() {
+            this.updateVolume();
+            this.updateParticles();
+        },
+
+        initialise() {
+            this.update();
+
+            if (volumeControl instanceof HTMLInputElement) {
+                volumeControl.addEventListener('input', () => {
+                    this.updateVolume();
+                });
+            }
+
+            if (particlesToggle instanceof HTMLInputElement) {
+                particlesToggle.addEventListener('change', () => {
+                    this.updateParticles();
+                });
+            }
+        }
+    };
+
+    Preview.initialise();
 </script>
 
 </StudioLayout>
