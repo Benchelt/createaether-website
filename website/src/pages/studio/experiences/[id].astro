@@ -1,5 +1,6 @@
 ---
 import StudioLayout from '../../../layouts/StudioLayout.astro';
+import GeneralPanel from '../../../components/studio/GeneralPanel.astro';
 import { experiences } from '../../../data/experiences';
 
 export function getStaticPaths() {
@@ -28,15 +29,7 @@ const { experience } = Astro.props;
 
     <div class="grid">
 
-        <div class="panel">
-            <h2>General</h2>
-
-            <label>Name</label>
-            <input value={experience.name} />
-
-            <label>Description</label>
-            <textarea rows="5">{experience.description}</textarea>
-        </div>
+        <GeneralPanel experience={experience} />
 
         <div class="panel">
             <h2>Audio</h2>
@@ -106,9 +99,10 @@ const { experience } = Astro.props;
             </div>
 
             <div class="preview-features">
-                <span>Audio enabled</span>
-                <span>Particles active</span>
-                <span>Lighting active</span>
+                <span id="audio-status">Audio enabled</span>
+                <span id="particles-status">Particles active</span>
+                <span id="lighting-status">Lighting active</span>
+                <span id="fog-status">Fog active</span>
             </div>
 
             <div class="preview-actions">
@@ -525,92 +519,141 @@ const { experience } = Astro.props;
     const particlesToggle = document.querySelector('#particles-toggle');
     const lightingToggle = document.querySelector('#lighting-toggle');
     const fogToggle = document.querySelector('#fog-toggle');
+
     const previewStage = document.querySelector('.preview-stage');
 
-    const Preview = {
+    const particlesStatus = document.querySelector('#particles-status');
+    const lightingStatus = document.querySelector('#lighting-status');
+    const fogStatus = document.querySelector('#fog-status');
 
-        updateVolume() {
-            if (
-                volumeControl instanceof HTMLInputElement &&
-                volumeValue instanceof HTMLOutputElement
-            ) {
-                volumeValue.value = `${volumeControl.value}%`;
+    const ExperienceState = {
+        data: {
+            audio: {
+                enabled: true,
+                volume: 40
+            },
+
+            atmosphere: {
+                particles: true,
+                lighting: true,
+                fog: false
             }
         },
 
-        updateParticles() {
-            if (
-                particlesToggle instanceof HTMLInputElement &&
-                previewStage instanceof HTMLElement
-            ) {
-                previewStage.classList.toggle(
-                    'preview-stage--particles-disabled',
-                    !particlesToggle.checked
-                );
+        readControls() {
+            if (volumeControl instanceof HTMLInputElement) {
+                this.data.audio.volume = Number(volumeControl.value);
             }
-        },
 
-        updateLighting() {
-            if (
-                lightingToggle instanceof HTMLInputElement &&
-                previewStage instanceof HTMLElement
-            ) {
-                previewStage.classList.toggle(
-                    'preview-stage--lighting-disabled',
-                    !lightingToggle.checked
-                );
+            if (particlesToggle instanceof HTMLInputElement) {
+                this.data.atmosphere.particles = particlesToggle.checked;
             }
-        },
 
-        updateFog() {
-            if (
-                fogToggle instanceof HTMLInputElement &&
-                previewStage instanceof HTMLElement
-            ) {
-                previewStage.classList.toggle(
-                    'preview-stage--fog-disabled',
-                    !fogToggle.checked
-                );
+            if (lightingToggle instanceof HTMLInputElement) {
+                this.data.atmosphere.lighting = lightingToggle.checked;
+            }
+
+            if (fogToggle instanceof HTMLInputElement) {
+                this.data.atmosphere.fog = fogToggle.checked;
             }
         },
 
         update() {
-            this.updateVolume();
-            this.updateParticles();
-            this.updateLighting();
-            this.updateFog();
+            this.readControls();
+            Preview.render(this.data);
         },
 
         initialise() {
-            this.update();
-
-            if (volumeControl instanceof HTMLInputElement) {
-                volumeControl.addEventListener('input', () => {
-                    this.updateVolume();
-                });
-            }
-
-            if (particlesToggle instanceof HTMLInputElement) {
-                particlesToggle.addEventListener('change', () => {
-                    this.updateParticles();
-                });
-            }
-
-            if (lightingToggle instanceof HTMLInputElement) {
-                lightingToggle.addEventListener('change', () => {
-                    this.updateLighting();
-                });
-            }
-
-            if (fogToggle instanceof HTMLInputElement) {
-                fogToggle.addEventListener('change', () => {
-                    this.updateFog();
-                });
-            }
+            this.readControls();
+            Preview.render(this.data);
         }
     };
 
-    Preview.initialise();
+    const Preview = {
+        updateVolume(state) {
+            if (volumeValue instanceof HTMLOutputElement) {
+                volumeValue.value = `${state.audio.volume}%`;
+            }
+        },
+
+        updateParticles(state) {
+            if (previewStage instanceof HTMLElement) {
+                previewStage.classList.toggle(
+                    'preview-stage--particles-disabled',
+                    !state.atmosphere.particles
+                );
+            }
+
+            if (particlesStatus instanceof HTMLElement) {
+                particlesStatus.textContent = state.atmosphere.particles
+                    ? 'Particles active'
+                    : 'Particles disabled';
+            }
+        },
+
+        updateLighting(state) {
+            if (previewStage instanceof HTMLElement) {
+                previewStage.classList.toggle(
+                    'preview-stage--lighting-disabled',
+                    !state.atmosphere.lighting
+                );
+            }
+
+            if (lightingStatus instanceof HTMLElement) {
+                lightingStatus.textContent = state.atmosphere.lighting
+                    ? 'Lighting active'
+                    : 'Lighting disabled';
+            }
+        },
+
+        updateFog(state) {
+            if (previewStage instanceof HTMLElement) {
+                previewStage.classList.toggle(
+                    'preview-stage--fog-disabled',
+                    !state.atmosphere.fog
+                );
+            }
+
+            if (fogStatus instanceof HTMLElement) {
+                fogStatus.textContent = state.atmosphere.fog
+                    ? 'Fog active'
+                    : 'Fog disabled';
+            }
+        },
+
+        render(state) {
+            this.updateVolume(state);
+            this.updateParticles(state);
+            this.updateLighting(state);
+            this.updateFog(state);
+        }
+    };
+
+    if (volumeControl instanceof HTMLInputElement) {
+        volumeControl.addEventListener('input', () => {
+            ExperienceState.update();
+        });
+    }
+
+    if (particlesToggle instanceof HTMLInputElement) {
+        particlesToggle.addEventListener('change', () => {
+            ExperienceState.update();
+        });
+    }
+
+    if (lightingToggle instanceof HTMLInputElement) {
+        lightingToggle.addEventListener('change', () => {
+            ExperienceState.update();
+        });
+    }
+
+    if (fogToggle instanceof HTMLInputElement) {
+        fogToggle.addEventListener('change', () => {
+            ExperienceState.update();
+        });
+    }
+
+    ExperienceState.initialise();
 </script>
 
 </StudioLayout>

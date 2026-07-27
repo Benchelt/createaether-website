@@ -1,0 +1,56 @@
+---
+const { experience } = Astro.props;
+---
+
+<div class="panel">
+    <h2>General</h2>
+
+    <label for="experience-name">
+        Experience Name
+    </label>
+
+    <input
+        id="experience-name"
+        type="text"
+        value={experience.name}
+    />
+
+    <label for="experience-description">
+        Description
+    </label>
+
+    <textarea
+        id="experience-description"
+        rows="3"
+    >{experience.description}</textarea>
+</div>
+
+<style>
+.panel{
+    background:#10182c;
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:18px;
+    padding:1.5rem;
+}
+
+.panel h2{
+    margin-top:0;
+}
+
+.panel label{
+    display:block;
+    margin-top:1rem;
+    margin-bottom:.5rem;
+}
+
+.panel input,
+.panel textarea{
+    width:100%;
+    box-sizing:border-box;
+    padding:.75rem;
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:8px;
+    background:#172036;
+    color:white;
+}
+</style>
