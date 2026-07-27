@@ -1,0 +1,137 @@
+---
+import StudioLayout from '../../../layouts/StudioLayout.astro';
+---
+
+<StudioLayout title="Temple Experience">
+
+<section class="editor">
+
+    <div class="hero">
+        <p>Experience Editor</p>
+        <h1>Temple</h1>
+        <span>Runtime Ready</span>
+    </div>
+
+    <div class="grid">
+
+        <div class="panel">
+            <h2>General</h2>
+
+            <label>Name</label>
+            <input value="Temple" />
+
+            <label>Description</label>
+            <textarea rows="5">
+Meditative temple environment with ambient audio and lighting.
+            </textarea>
+        </div>
+
+        <div class="panel">
+            <h2>Audio</h2>
+
+            <label>
+                <input type="checkbox" checked />
+                Enable Audio
+            </label>
+
+            <label>Volume</label>
+            <input type="range" value="40" />
+        </div>
+
+        <div class="panel">
+            <h2>Atmosphere</h2>
+
+            <label>Particles</label>
+            <input type="checkbox" checked />
+
+            <label>Lighting</label>
+            <input type="checkbox" checked />
+
+            <label>Fog</label>
+            <input type="checkbox" />
+        </div>
+
+        <div class="panel">
+            <h2>Runtime</h2>
+
+            <button>Preview</button>
+            <button>Save</button>
+            <button>Publish</button>
+        </div>
+
+    </div>
+
+</section>
+
+<style>
+.editor{
+    padding:2rem;
+}
+
+.hero{
+    margin-bottom:2rem;
+}
+
+.hero p{
+    color:#38bdf8;
+    text-transform:uppercase;
+    letter-spacing:.1em;
+    font-size:.8rem;
+}
+
+.hero h1{
+    margin:.25rem 0;
+}
+
+.hero span{
+    color:#22c55e;
+    font-weight:600;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+    gap:1.5rem;
+}
+
+.panel{
+    background:#10182c;
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:18px;
+    padding:1.5rem;
+}
+
+.panel h2{
+    margin-top:0;
+}
+
+.panel label{
+    display:block;
+    margin-top:1rem;
+    margin-bottom:.5rem;
+}
+
+.panel input,
+.panel textarea{
+    width:100%;
+    background:#172036;
+    border:1px solid rgba(255,255,255,.08);
+    color:white;
+    border-radius:8px;
+    padding:.75rem;
+    box-sizing:border-box;
+}
+
+.panel button{
+    margin-right:.5rem;
+    margin-top:.75rem;
+    padding:.7rem 1.1rem;
+    border:none;
+    border-radius:10px;
+    background:#2563eb;
+    color:white;
+    cursor:pointer;
+}
+</style>
+
+</StudioLayout>

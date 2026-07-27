@@ -1,6 +1,8 @@
 ---
 import StudioLayout from '../layouts/StudioLayout.astro';
 import MetricCard from '../components/studio/MetricCard.astro';
+import StatusCard from '../components/studio/StatusCard.astro';
+import ExperienceCard from '../components/studio/ExperienceCard.astro';
 ---
 
 <StudioLayout
@@ -47,6 +49,75 @@ import MetricCard from '../components/studio/MetricCard.astro';
         value="v1.0.0"
         description="Latest stable release"
       />
+    </section>
+
+    <section class="studio-dashboard__runtime">
+      <div class="studio-dashboard__section-heading">
+        <div>
+          <p class="studio-dashboard__workspace-label">System health</p>
+          <h2>Runtime services</h2>
+        </div>
+
+        <span>4 services monitored</span>
+      </div>
+
+      <div class="studio-dashboard__services">
+        <StatusCard
+          title="Runtime Engine"
+          status="Operational"
+          colour="green"
+        />
+
+        <StatusCard
+          title="Experience Manager"
+          status="Running"
+          colour="green"
+        />
+
+        <StatusCard
+          title="Audio Engine"
+          status="Active"
+          colour="green"
+        />
+
+        <StatusCard
+          title="Marketplace"
+          status="Coming soon"
+          colour="yellow"
+        />
+      </div>
+    </section>
+
+    <section class="studio-dashboard__experiences">
+      <div class="studio-dashboard__section-heading">
+        <div>
+          <p class="studio-dashboard__workspace-label">Experience library</p>
+          <h2>Recent experiences</h2>
+        </div>
+
+        <a href="/studio/library">View all experiences</a>
+      </div>
+
+      <div class="studio-dashboard__experience-grid">
+        <ExperienceCard
+          title="Temple"
+          description="A meditative temple environment with ambient audio, subtle lighting and ritual atmosphere."
+          status="Runtime ready"
+          href="/studio/experiences/temple/"
+        />
+
+        <ExperienceCard
+          title="Forest"
+          description="A calm woodland experience with layered nature audio, particles and responsive ambience."
+          status="Draft"
+        />
+
+        <ExperienceCard
+          title="Ocean"
+          description="A spacious coastal atmosphere combining waves, wind and slow cinematic movement."
+          status="Published"
+        />
+      </div>
     </section>
 
     <section class="studio-dashboard__workspace">
@@ -130,6 +201,75 @@ import MetricCard from '../components/studio/MetricCard.astro';
     gap: 1rem;
   }
 
+  .studio-dashboard__runtime {
+    margin-top: 1.25rem;
+    padding: 1.75rem;
+    border: 1px solid rgba(148, 163, 184, 0.14);
+    border-radius: 1.35rem;
+    background:
+      linear-gradient(
+        135deg,
+        rgba(15, 23, 42, 0.82),
+        rgba(8, 15, 29, 0.72)
+      );
+    box-shadow: inset 0 1px rgba(255, 255, 255, 0.025);
+  }
+
+  .studio-dashboard__section-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .studio-dashboard__section-heading h2 {
+    margin: 0;
+    color: #e2e8f0;
+    font-size: 1.25rem;
+  }
+
+  .studio-dashboard__section-heading > span {
+    color: #64748b;
+    font-size: 0.78rem;
+  }
+
+  .studio-dashboard__services {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.85rem;
+  }
+
+  .studio-dashboard__experiences {
+    margin-top: 1.25rem;
+    padding: 1.75rem;
+    border: 1px solid rgba(148, 163, 184, 0.14);
+    border-radius: 1.35rem;
+    background:
+      linear-gradient(
+        135deg,
+        rgba(15, 23, 42, 0.82),
+        rgba(8, 15, 29, 0.72)
+      );
+    box-shadow: inset 0 1px rgba(255, 255, 255, 0.025);
+  }
+
+  .studio-dashboard__section-heading a {
+    color: #7dd3fc;
+    font-size: 0.78rem;
+    text-decoration: none;
+  }
+
+  .studio-dashboard__section-heading a:hover {
+    color: #bae6fd;
+  }
+
+  .studio-dashboard__experience-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
   .studio-dashboard__workspace {
     display: flex;
     align-items: flex-start;
@@ -196,6 +336,10 @@ import MetricCard from '../components/studio/MetricCard.astro';
     .studio-dashboard__metrics {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
+
+    .studio-dashboard__experience-grid {
+      grid-template-columns: 1fr;
+    }
   }
 
   @media (max-width: 720px) {
@@ -208,8 +352,14 @@ import MetricCard from '../components/studio/MetricCard.astro';
       width: 100%;
     }
 
-    .studio-dashboard__metrics {
+    .studio-dashboard__metrics,
+    .studio-dashboard__services,
+    .studio-dashboard__experience-grid {
       grid-template-columns: 1fr;
+    }
+
+    .studio-dashboard__section-heading {
+      flex-direction: column;
     }
   }
 </style>
