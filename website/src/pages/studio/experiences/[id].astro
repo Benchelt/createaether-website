@@ -484,6 +484,8 @@ const { experience } = Astro.props;
 </style>
 
 <script>
+    import { ExperienceState } from '../../../lib/ExperienceState';
+
     const volumeControl = document.querySelector('#volume-control');
     const volumeValue = document.querySelector('#volume-value');
 
@@ -497,48 +499,15 @@ const { experience } = Astro.props;
     const lightingStatus = document.querySelector('#lighting-status');
     const fogStatus = document.querySelector('#fog-status');
 
-    const ExperienceState = {
-        data: {
-            audio: {
-                enabled: true,
-                volume: 40
-            },
-
-            atmosphere: {
-                particles: true,
-                lighting: true,
-                fog: false
-            }
+    const experienceState = new ExperienceState(
+        {
+            volumeControl,
+            particlesToggle,
+            lightingToggle,
+            fogToggle
         },
-
-        readControls() {
-            if (volumeControl instanceof HTMLInputElement) {
-                this.data.audio.volume = Number(volumeControl.value);
-            }
-
-            if (particlesToggle instanceof HTMLInputElement) {
-                this.data.atmosphere.particles = particlesToggle.checked;
-            }
-
-            if (lightingToggle instanceof HTMLInputElement) {
-                this.data.atmosphere.lighting = lightingToggle.checked;
-            }
-
-            if (fogToggle instanceof HTMLInputElement) {
-                this.data.atmosphere.fog = fogToggle.checked;
-            }
-        },
-
-        update() {
-            this.readControls();
-            Preview.render(this.data);
-        },
-
-        initialise() {
-            this.readControls();
-            Preview.render(this.data);
-        }
-    };
+        (state) => Preview.render(state)
+    );
 
     const Preview = {
         updateVolume(state) {
@@ -602,29 +571,29 @@ const { experience } = Astro.props;
 
     if (volumeControl instanceof HTMLInputElement) {
         volumeControl.addEventListener('input', () => {
-            ExperienceState.update();
+            experienceState.update();
         });
     }
 
     if (particlesToggle instanceof HTMLInputElement) {
         particlesToggle.addEventListener('change', () => {
-            ExperienceState.update();
+            experienceState.update();
         });
     }
 
     if (lightingToggle instanceof HTMLInputElement) {
         lightingToggle.addEventListener('change', () => {
-            ExperienceState.update();
+            experienceState.update();
         });
     }
 
     if (fogToggle instanceof HTMLInputElement) {
         fogToggle.addEventListener('change', () => {
-            ExperienceState.update();
+            experienceState.update();
         });
     }
 
-    ExperienceState.initialise();
+    experienceState.initialise();
 </script>
 
 </StudioLayout>
