@@ -485,6 +485,7 @@ const { experience } = Astro.props;
 
 <script>
     import { ExperienceState } from '../../../lib/ExperienceState';
+    import { ExperienceRuntime } from '../../../lib/ExperienceRuntime';
     import { PreviewController } from '../../../components/studio/PreviewController';
 
     const volumeControl = document.querySelector('#volume-control');
@@ -508,6 +509,12 @@ const { experience } = Astro.props;
         fogStatus
     });
 
+    const experienceRuntime = new ExperienceRuntime();
+
+    experienceRuntime.register(
+        (state) => previewController.render(state)
+    );
+
     const experienceState = new ExperienceState(
         {
             volumeControl,
@@ -515,7 +522,7 @@ const { experience } = Astro.props;
             lightingToggle,
             fogToggle
         },
-        (state) => previewController.render(state)
+        (state) => experienceRuntime.update(state)
     );
 
     if (volumeControl instanceof HTMLInputElement) {
