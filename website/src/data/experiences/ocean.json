@@ -1,0 +1,15 @@
+{
+  "id": "ocean",
+  "name": "Ocean",
+  "description": "A spacious coastal atmosphere combining waves, wind and slow cinematic movement.",
+  "status": "Published",
+  "audio": {
+    "enabled": true,
+    "volume": 45
+  },
+  "atmosphere": {
+    "particles": false,
+    "lighting": true,
+    "fog": true
+  }
+}

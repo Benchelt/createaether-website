@@ -3,6 +3,7 @@ import StudioLayout from '../layouts/StudioLayout.astro';
 import MetricCard from '../components/studio/MetricCard.astro';
 import StatusCard from '../components/studio/StatusCard.astro';
 import ExperienceCard from '../components/studio/ExperienceCard.astro';
+import { experiences } from '../data/experiences';
 ---
 
 <StudioLayout
@@ -99,24 +100,16 @@ import ExperienceCard from '../components/studio/ExperienceCard.astro';
       </div>
 
       <div class="studio-dashboard__experience-grid">
-        <ExperienceCard
-          title="Temple"
-          description="A meditative temple environment with ambient audio, subtle lighting and ritual atmosphere."
-          status="Runtime ready"
-          href="/studio/experiences/temple/"
-        />
-
-        <ExperienceCard
-          title="Forest"
-          description="A calm woodland experience with layered nature audio, particles and responsive ambience."
-          status="Draft"
-        />
-
-        <ExperienceCard
-          title="Ocean"
-          description="A spacious coastal atmosphere combining waves, wind and slow cinematic movement."
-          status="Published"
-        />
+        {
+          experiences.map((experience) => (
+            <ExperienceCard
+              title={experience.name}
+              description={experience.description}
+              status={experience.status}
+              href={experience.href}
+            />
+          ))
+        }
       </div>
     </section>
 

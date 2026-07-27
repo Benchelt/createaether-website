@@ -1,0 +1,15 @@
+{
+  "id": "temple",
+  "name": "Temple",
+  "description": "A meditative temple environment with ambient audio, subtle lighting and ritual atmosphere.",
+  "status": "Runtime Ready",
+  "audio": {
+    "enabled": true,
+    "volume": 40
+  },
+  "atmosphere": {
+    "particles": true,
+    "lighting": true,
+    "fog": false
+  }
+}

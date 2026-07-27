@@ -1,15 +1,29 @@
 ---
 import StudioLayout from '../../../layouts/StudioLayout.astro';
+import { experiences } from '../../../data/experiences';
+
+export function getStaticPaths() {
+    return experiences.map((experience) => ({
+        params: {
+            id: experience.id,
+        },
+        props: {
+            experience,
+        },
+    }));
+}
+
+const { experience } = Astro.props;
 ---
 
-<StudioLayout title="Temple Experience">
+<StudioLayout title={`${experience.name} Experience`}>
 
 <section class="editor">
 
     <div class="hero">
         <p>Experience Editor</p>
-        <h1>Temple</h1>
-        <span>Runtime Ready</span>
+        <h1>{experience.name}</h1>
+        <span>{experience.status}</span>
     </div>
 
     <div class="grid">
@@ -18,25 +32,23 @@ import StudioLayout from '../../../layouts/StudioLayout.astro';
             <h2>General</h2>
 
             <label>Name</label>
-            <input value="Temple" />
+            <input value={experience.name} />
 
             <label>Description</label>
-            <textarea rows="5">
-Meditative temple environment with ambient audio and lighting.
-            </textarea>
+            <textarea rows="5">{experience.description}</textarea>
         </div>
 
         <div class="panel">
             <h2>Audio</h2>
 
             <label>
-                <input type="checkbox" checked />
+                <input type="checkbox" checked={experience.audio.enabled} />
                 Enable Audio
             </label>
 
             <div class="volume-heading">
                 <label for="volume-control">Volume</label>
-                <output id="volume-value" for="volume-control">40%</output>
+                <output id="volume-value" for="volume-control">{experience.audio.volume}%</output>
             </div>
 
             <input
@@ -44,7 +56,7 @@ Meditative temple environment with ambient audio and lighting.
                 type="range"
                 min="0"
                 max="100"
-                value="40"
+                value={experience.audio.volume}
             />
         </div>
 
@@ -52,13 +64,13 @@ Meditative temple environment with ambient audio and lighting.
             <h2>Atmosphere</h2>
 
             <label>Particles</label>
-            <input type="checkbox" checked />
+            <input type="checkbox" checked={experience.atmosphere.particles} />
 
             <label>Lighting</label>
-            <input type="checkbox" checked />
+            <input type="checkbox" checked={experience.atmosphere.lighting} />
 
             <label>Fog</label>
-            <input type="checkbox" />
+            <input type="checkbox" checked={experience.atmosphere.fog} />
         </div>
 
         <div class="panel preview-panel">

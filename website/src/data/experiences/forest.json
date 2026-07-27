@@ -1,0 +1,15 @@
+{
+  "id": "forest",
+  "name": "Forest",
+  "description": "A calm woodland experience with layered nature audio, particles and responsive ambience.",
+  "status": "Draft",
+  "audio": {
+    "enabled": true,
+    "volume": 35
+  },
+  "atmosphere": {
+    "particles": true,
+    "lighting": true,
+    "fog": true
+  }
+}
