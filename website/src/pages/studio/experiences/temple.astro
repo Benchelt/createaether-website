@@ -51,12 +51,57 @@ Meditative temple environment with ambient audio and lighting.
             <input type="checkbox" />
         </div>
 
-        <div class="panel">
-            <h2>Runtime</h2>
+        <div class="panel preview-panel">
+            <div class="preview-header">
+                <div>
+                    <p class="panel-label">Runtime preview</p>
+                    <h2>Live Preview</h2>
+                </div>
 
-            <button>Preview</button>
-            <button>Save</button>
-            <button>Publish</button>
+                <span class="preview-status">
+                    <span class="preview-status__dot"></span>
+                    Ready
+                </span>
+            </div>
+
+            <div class="preview-stage" aria-label="Temple atmosphere preview">
+                <div class="preview-glow"></div>
+                <div class="preview-orb"></div>
+
+                <span class="preview-particle preview-particle--one"></span>
+                <span class="preview-particle preview-particle--two"></span>
+                <span class="preview-particle preview-particle--three"></span>
+                <span class="preview-particle preview-particle--four"></span>
+                <span class="preview-particle preview-particle--five"></span>
+
+                <div class="preview-fog preview-fog--one"></div>
+                <div class="preview-fog preview-fog--two"></div>
+
+                <div class="preview-stage__label">
+                    <span>Temple Environment</span>
+                    <small>Ambient runtime simulation</small>
+                </div>
+            </div>
+
+            <div class="preview-features">
+                <span>Audio enabled</span>
+                <span>Particles active</span>
+                <span>Lighting active</span>
+            </div>
+
+            <div class="preview-actions">
+                <button type="button" class="button-secondary">
+                    Launch Preview
+                </button>
+
+                <button type="button">
+                    Save
+                </button>
+
+                <button type="button">
+                    Publish
+                </button>
+            </div>
         </div>
 
     </div>
@@ -132,6 +177,285 @@ Meditative temple environment with ambient audio and lighting.
     color:white;
     cursor:pointer;
 }
+
+.preview-panel{
+    overflow:hidden;
+}
+
+.preview-header{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:1rem;
+    margin-bottom:1.25rem;
+}
+
+.preview-header h2{
+    margin:.25rem 0 0;
+}
+
+.panel-label{
+    margin:0;
+    color:#38bdf8;
+    font-size:.72rem;
+    font-weight:700;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+}
+
+.preview-status{
+    display:inline-flex;
+    align-items:center;
+    gap:.5rem;
+    padding:.45rem .7rem;
+    border:1px solid rgba(52,211,153,.25);
+    border-radius:999px;
+    background:rgba(16,185,129,.08);
+    color:#6ee7b7;
+    font-size:.75rem;
+    font-weight:700;
+}
+
+.preview-status__dot{
+    width:.5rem;
+    height:.5rem;
+    border-radius:50%;
+    background:#34d399;
+    box-shadow:0 0 12px rgba(52,211,153,.9);
+}
+
+.preview-stage{
+    position:relative;
+    min-height:240px;
+    overflow:hidden;
+    border:1px solid rgba(56,189,248,.18);
+    border-radius:14px;
+    background:
+        radial-gradient(
+            circle at 50% 48%,
+            rgba(59,130,246,.16),
+            transparent 34%
+        ),
+        linear-gradient(
+            180deg,
+            #07101f 0%,
+            #0b1427 58%,
+            #111a2e 100%
+        );
+}
+
+.preview-glow{
+    position:absolute;
+    left:50%;
+    top:48%;
+    width:180px;
+    height:180px;
+    border-radius:50%;
+    background:rgba(59,130,246,.12);
+    filter:blur(28px);
+    transform:translate(-50%,-50%);
+    animation:preview-pulse 4s ease-in-out infinite;
+}
+
+.preview-orb{
+    position:absolute;
+    left:50%;
+    top:45%;
+    width:74px;
+    height:74px;
+    border:1px solid rgba(147,197,253,.55);
+    border-radius:50%;
+    background:
+        radial-gradient(
+            circle at 38% 32%,
+            rgba(255,255,255,.92),
+            rgba(96,165,250,.55) 16%,
+            rgba(37,99,235,.2) 48%,
+            rgba(15,23,42,.1) 72%
+        );
+    box-shadow:
+        0 0 24px rgba(59,130,246,.55),
+        0 0 70px rgba(37,99,235,.28);
+    transform:translate(-50%,-50%);
+    animation:preview-float 5s ease-in-out infinite;
+}
+
+.preview-particle{
+    position:absolute;
+    width:5px;
+    height:5px;
+    border-radius:50%;
+    background:#93c5fd;
+    box-shadow:0 0 10px rgba(147,197,253,.9);
+    animation:particle-rise 6s ease-in-out infinite;
+}
+
+.preview-particle--one{
+    left:18%;
+    top:64%;
+    animation-delay:0s;
+}
+
+.preview-particle--two{
+    left:30%;
+    top:38%;
+    animation-delay:1.1s;
+}
+
+.preview-particle--three{
+    right:24%;
+    top:29%;
+    animation-delay:2.2s;
+}
+
+.preview-particle--four{
+    right:17%;
+    top:66%;
+    animation-delay:3.1s;
+}
+
+.preview-particle--five{
+    left:54%;
+    top:20%;
+    animation-delay:4s;
+}
+
+.preview-fog{
+    position:absolute;
+    left:-15%;
+    width:130%;
+    height:70px;
+    border-radius:50%;
+    background:rgba(148,163,184,.07);
+    filter:blur(22px);
+}
+
+.preview-fog--one{
+    bottom:15px;
+    animation:fog-drift 9s ease-in-out infinite;
+}
+
+.preview-fog--two{
+    bottom:48px;
+    opacity:.55;
+    animation:fog-drift 12s ease-in-out infinite reverse;
+}
+
+.preview-stage__label{
+    position:absolute;
+    left:1rem;
+    right:1rem;
+    bottom:1rem;
+    display:flex;
+    flex-direction:column;
+    gap:.2rem;
+}
+
+.preview-stage__label span{
+    color:#f8fafc;
+    font-size:.8rem;
+    font-weight:700;
+}
+
+.preview-stage__label small{
+    color:#7c93b6;
+    font-size:.7rem;
+}
+
+.preview-features{
+    display:flex;
+    flex-wrap:wrap;
+    gap:.5rem;
+    margin-top:1rem;
+}
+
+.preview-features span{
+    padding:.4rem .65rem;
+    border:1px solid rgba(148,163,184,.14);
+    border-radius:999px;
+    background:rgba(15,23,42,.6);
+    color:#9fb4d4;
+    font-size:.7rem;
+}
+
+.preview-actions{
+    display:flex;
+    flex-wrap:wrap;
+    gap:.55rem;
+    margin-top:1rem;
+}
+
+.preview-actions button{
+    margin:0;
+}
+
+.preview-actions .button-secondary{
+    border:1px solid rgba(56,189,248,.32);
+    background:rgba(14,116,144,.12);
+    color:#7dd3fc;
+}
+
+.preview-actions .button-secondary:hover{
+    background:rgba(14,116,144,.24);
+}
+
+@keyframes preview-float{
+    0%,
+    100%{
+        transform:translate(-50%,-50%);
+    }
+
+    50%{
+        transform:translate(-50%,-58%);
+    }
+}
+
+@keyframes preview-pulse{
+    0%,
+    100%{
+        opacity:.55;
+        transform:translate(-50%,-50%) scale(.9);
+    }
+
+    50%{
+        opacity:1;
+        transform:translate(-50%,-50%) scale(1.15);
+    }
+}
+
+@keyframes particle-rise{
+    0%,
+    100%{
+        opacity:.2;
+        transform:translateY(12px) scale(.8);
+    }
+
+    50%{
+        opacity:1;
+        transform:translateY(-18px) scale(1.2);
+    }
+}
+
+@keyframes fog-drift{
+    0%,
+    100%{
+        transform:translateX(-3%);
+    }
+
+    50%{
+        transform:translateX(3%);
+    }
+}
+
+@media (prefers-reduced-motion: reduce){
+    .preview-glow,
+    .preview-orb,
+    .preview-particle,
+    .preview-fog{
+        animation:none;
+    }
+}
+
 </style>
 
 </StudioLayout>
