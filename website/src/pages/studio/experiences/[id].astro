@@ -4,6 +4,10 @@ import GeneralPanel from '../../../components/studio/GeneralPanel.astro';
 import AudioPanel from '../../../components/studio/AudioPanel.astro';
 import AtmospherePanel from '../../../components/studio/AtmospherePanel.astro';
 import { experiences } from '../../../data/experiences';
+import {
+    audioTracks,
+    defaultAudioTrack
+} from '../../../data/audio/tracks';
 
 export function getStaticPaths() {
     return experiences.map((experience) => ({
@@ -17,6 +21,11 @@ export function getStaticPaths() {
 }
 
 const { experience } = Astro.props;
+
+const selectedAudioTrack =
+    audioTracks.find(
+        (track) => track.id === experience.audio.track
+    ) ?? defaultAudioTrack;
 ---
 
 <StudioLayout title={`${experience.name} Experience`}>
@@ -537,9 +546,10 @@ const { experience } = Astro.props;
 
 <audio
     id="experience-audio"
-    src="/audio/om-so-hum.mp3"
+    src={selectedAudioTrack.src}
+    data-track-id={experience.audio.track}
     preload="metadata"
-    loop
+    loop={selectedAudioTrack.loop}
     hidden
 ></audio>
 
@@ -548,6 +558,10 @@ const { experience } = Astro.props;
     import { ExperienceRuntime } from '../../../lib/ExperienceRuntime';
     import { AudioSystem } from '../../../lib/systems/AudioSystem';
     import { PreviewController } from '../../../components/studio/PreviewController';
+    import { audioTracks } from '../../../data/audio/tracks';
+
+    const audioEnabledToggle =
+        document.querySelector('#audio-enabled');
 
     const volumeControl = document.querySelector('#volume-control');
     const volumeValue = document.querySelector('#volume-value');
@@ -580,7 +594,8 @@ const { experience } = Astro.props;
     const experienceRuntime = new ExperienceRuntime();
 
     const audioSystem = new AudioSystem(
-        audioElement
+        audioElement,
+        audioTracks
     );
 
     experienceRuntime.register(
@@ -593,6 +608,11 @@ const { experience } = Astro.props;
 
     const experienceState = new ExperienceState(
         {
+            audioEnabledToggle,
+            audioTrack:
+                audioElement instanceof HTMLAudioElement
+                    ? audioElement.dataset.trackId ?? ''
+                    : '',
             volumeControl,
             particlesToggle,
             lightingToggle,
@@ -600,6 +620,18 @@ const { experience } = Astro.props;
         },
         (state) => experienceRuntime.update(state)
     );
+
+    if (
+        audioEnabledToggle
+        instanceof HTMLInputElement
+    ) {
+        audioEnabledToggle.addEventListener(
+            'change',
+            () => {
+                experienceState.update();
+            }
+        );
+    }
 
     if (volumeControl instanceof HTMLInputElement) {
         volumeControl.addEventListener('input', () => {

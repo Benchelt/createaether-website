@@ -6,6 +6,8 @@ export type ExperienceStateData = Pick<
 >;
 
 export interface ExperienceControls {
+    audioEnabledToggle: Element | null;
+    audioTrack: string;
     volumeControl: Element | null;
     particlesToggle: Element | null;
     lightingToggle: Element | null;
@@ -32,7 +34,8 @@ export class ExperienceState {
         this.data = {
             audio: {
                 enabled: true,
-                volume: 40
+                volume: 40,
+                track: controls.audioTrack
             },
 
             atmosphere: {
@@ -45,11 +48,20 @@ export class ExperienceState {
 
     private readControls(): void {
         const {
+            audioEnabledToggle,
             volumeControl,
             particlesToggle,
             lightingToggle,
             fogToggle
         } = this.controls;
+
+        if (
+            audioEnabledToggle
+            instanceof HTMLInputElement
+        ) {
+            this.data.audio.enabled =
+                audioEnabledToggle.checked;
+        }
 
         if (volumeControl instanceof HTMLInputElement) {
             this.data.audio.volume = Number(volumeControl.value);
