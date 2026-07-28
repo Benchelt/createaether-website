@@ -5,7 +5,8 @@
   "status": "Draft",
   "audio": {
     "enabled": true,
-    "volume": 35
+    "volume": 35,
+    "track": "forest-ambience"
   },
   "atmosphere": {
     "particles": true,

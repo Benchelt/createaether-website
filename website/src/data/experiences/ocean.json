@@ -5,7 +5,8 @@
   "status": "Published",
   "audio": {
     "enabled": true,
-    "volume": 45
+    "volume": 45,
+    "track": "ocean-waves"
   },
   "atmosphere": {
     "particles": false,

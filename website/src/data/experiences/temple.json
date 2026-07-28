@@ -5,7 +5,8 @@
   "status": "Runtime Ready",
   "audio": {
     "enabled": true,
-    "volume": 40
+    "volume": 40,
+    "track": "om-so-hum"
   },
   "atmosphere": {
     "particles": true,
