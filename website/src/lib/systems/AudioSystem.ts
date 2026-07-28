@@ -21,8 +21,13 @@ export class AudioSystem
     private readonly fallbackTrack:
         AudioTrack | null;
 
+    private readonly fadeDurationMs = 650;
+
     private activeTrackId:
         string | null = null;
+
+    private fadeFrame:
+        number | null = null;
 
     constructor(
         audioElement: Element | null,
@@ -44,6 +49,104 @@ export class AudioSystem
             tracks[0] ?? null;
     }
 
+    private cancelFade(): void {
+        if (this.fadeFrame === null) {
+            return;
+        }
+
+        window.cancelAnimationFrame(
+            this.fadeFrame
+        );
+
+        this.fadeFrame = null;
+    }
+
+    private fadeTo(
+        targetVolume: number,
+        onComplete?: () => void
+    ): void {
+        if (!this.audioElement) {
+            return;
+        }
+
+        this.cancelFade();
+
+        const audioElement =
+            this.audioElement;
+
+        const clampedTarget = Math.min(
+            1,
+            Math.max(0, targetVolume)
+        );
+
+        const startVolume =
+            audioElement.volume;
+
+        const volumeDifference =
+            clampedTarget - startVolume;
+
+        if (
+            Math.abs(volumeDifference)
+            < 0.001
+        ) {
+            audioElement.volume =
+                clampedTarget;
+
+            onComplete?.();
+
+            return;
+        }
+
+        const startTime =
+            performance.now();
+
+        const animate = (
+            currentTime: number
+        ) => {
+            const elapsed =
+                currentTime - startTime;
+
+            const progress = Math.min(
+                1,
+                elapsed / this.fadeDurationMs
+            );
+
+            const easedProgress =
+                1 - Math.pow(
+                    1 - progress,
+                    3
+                );
+
+            audioElement.volume =
+                startVolume +
+                (
+                    volumeDifference *
+                    easedProgress
+                );
+
+            if (progress < 1) {
+                this.fadeFrame =
+                    window.requestAnimationFrame(
+                        animate
+                    );
+
+                return;
+            }
+
+            audioElement.volume =
+                clampedTarget;
+
+            this.fadeFrame = null;
+
+            onComplete?.();
+        };
+
+        this.fadeFrame =
+            window.requestAnimationFrame(
+                animate
+            );
+    }
+
     public update(
         state: ExperienceStateData
     ): void {
@@ -52,14 +155,18 @@ export class AudioSystem
         }
 
         const requestedTrack =
-            this.tracks.get(state.audio.track);
+            this.tracks.get(
+                state.audio.track
+            );
 
         const resolvedTrack =
-            requestedTrack ?? this.fallbackTrack;
+            requestedTrack ??
+            this.fallbackTrack;
 
         if (
             resolvedTrack &&
-            resolvedTrack.id !== this.activeTrackId
+            resolvedTrack.id !==
+                this.activeTrackId
         ) {
             const wasPlaying =
                 !this.audioElement.paused;
@@ -75,37 +182,58 @@ export class AudioSystem
             this.activeTrackId =
                 resolvedTrack.id;
 
-            if (wasPlaying && state.audio.enabled) {
-                void this.audioElement.play().catch(
-                    (error) => {
+            if (
+                wasPlaying &&
+                state.audio.enabled
+            ) {
+                void this.audioElement
+                    .play()
+                    .catch((error) => {
                         console.error(
                             'Unable to switch audio track.',
                             error
                         );
-                    }
-                );
+                    });
             }
         }
 
-        const normalisedVolume = Math.min(
-            1,
-            Math.max(
+        const normalisedVolume =
+            Math.min(
+                1,
+                Math.max(
+                    0,
+                    state.audio.volume / 100
+                )
+            );
+
+        this.audioElement.muted = false;
+
+        if (!state.audio.enabled) {
+            if (this.audioElement.paused) {
+                this.cancelFade();
+                this.audioElement.volume = 0;
+
+                return;
+            }
+
+            this.fadeTo(
                 0,
-                state.audio.volume / 100
-            )
-        );
+                () => {
+                    if (
+                        !this.audioElement
+                    ) {
+                        return;
+                    }
 
-        this.audioElement.volume =
-            normalisedVolume;
+                    this.audioElement.pause();
+                }
+            );
 
-        this.audioElement.muted =
-            !state.audio.enabled;
-
-        if (
-            !state.audio.enabled &&
-            !this.audioElement.paused
-        ) {
-            this.audioElement.pause();
+            return;
         }
+
+        this.fadeTo(
+            normalisedVolume
+        );
     }
 }
