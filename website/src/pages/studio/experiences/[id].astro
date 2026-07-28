@@ -565,6 +565,7 @@ const selectedAudioTrack =
     import { ExperienceLoader } from '../../../lib/ExperienceLoader';
     import type { Experience } from '../../../lib/models/Experience';
     import { AudioSystem } from '../../../lib/systems/AudioSystem';
+import { ParticleSystem } from '../../../lib/systems/ParticleSystem';
     import { PreviewController } from '../../../components/studio/PreviewController';
     import { audioTracks } from '../../../data/audio/tracks';
 
@@ -618,6 +619,13 @@ const selectedAudioTrack =
 
     experienceRuntime.register(
         audioSystem
+    );
+
+    const particleSystem =
+        new ParticleSystem();
+
+    experienceRuntime.register(
+        particleSystem
     );
 
     const experienceState = new ExperienceState(
