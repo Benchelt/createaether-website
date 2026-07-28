@@ -10,6 +10,10 @@ import type {
     AudioTrack
 } from '../models/AudioTrack';
 
+import type {
+    RuntimeEvents
+} from '../RuntimeEvents';
+
 export class AudioSystem
     implements ExperienceRuntimeSystem {
     private readonly audioElement:
@@ -21,6 +25,9 @@ export class AudioSystem
     private readonly fallbackTrack:
         AudioTrack | null;
 
+    private readonly events:
+        RuntimeEvents | null;
+
     private readonly fadeDurationMs = 650;
 
     private activeTrackId:
@@ -31,7 +38,8 @@ export class AudioSystem
 
     constructor(
         audioElement: Element | null,
-        tracks: AudioTrack[] = []
+        tracks: AudioTrack[] = [],
+        events: RuntimeEvents | null = null
     ) {
         this.audioElement =
             audioElement instanceof HTMLAudioElement
@@ -47,6 +55,8 @@ export class AudioSystem
 
         this.fallbackTrack =
             tracks[0] ?? null;
+
+        this.events = events;
     }
 
     private cancelFade(): void {
@@ -85,12 +95,28 @@ export class AudioSystem
         const volumeDifference =
             clampedTarget - startVolume;
 
+        this.events?.emit(
+            'audio:fade-start',
+            {
+                fromVolume: startVolume,
+                toVolume: clampedTarget,
+                durationMs: this.fadeDurationMs
+            }
+        );
+
         if (
             Math.abs(volumeDifference)
             < 0.001
         ) {
             audioElement.volume =
                 clampedTarget;
+
+            this.events?.emit(
+                'audio:fade-complete',
+                {
+                    volume: clampedTarget
+                }
+            );
 
             onComplete?.();
 
@@ -138,6 +164,13 @@ export class AudioSystem
 
             this.fadeFrame = null;
 
+            this.events?.emit(
+                'audio:fade-complete',
+                {
+                    volume: clampedTarget
+                }
+            );
+
             onComplete?.();
         };
 
@@ -168,6 +201,19 @@ export class AudioSystem
             resolvedTrack.id !==
                 this.activeTrackId
         ) {
+            const previousTrackId =
+                this.activeTrackId;
+
+            this.events?.emit(
+                'audio:track-changing',
+                {
+                    fromTrackId:
+                        previousTrackId,
+                    toTrack:
+                        resolvedTrack
+                }
+            );
+
             const wasPlaying =
                 !this.audioElement.paused;
 
@@ -181,6 +227,13 @@ export class AudioSystem
 
             this.activeTrackId =
                 resolvedTrack.id;
+
+            this.events?.emit(
+                'audio:track-changed',
+                {
+                    track: resolvedTrack
+                }
+            );
 
             if (
                 wasPlaying &&

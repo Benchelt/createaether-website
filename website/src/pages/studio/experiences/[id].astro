@@ -595,7 +595,8 @@ const selectedAudioTrack =
 
     const audioSystem = new AudioSystem(
         audioElement,
-        audioTracks
+        audioTracks,
+        experienceRuntime.events
     );
 
     experienceRuntime.register(

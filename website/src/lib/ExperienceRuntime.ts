@@ -2,6 +2,10 @@ import type {
     ExperienceStateData
 } from './ExperienceState';
 
+import {
+    RuntimeEvents
+} from './RuntimeEvents';
+
 export interface ExperienceRuntimeSystem {
     update(state: ExperienceStateData): void;
 }
@@ -10,9 +14,15 @@ export class ExperienceRuntime {
     private readonly systems =
         new Set<ExperienceRuntimeSystem>();
 
+    public readonly events:
+        RuntimeEvents;
+
     constructor(
-        systems: ExperienceRuntimeSystem[] = []
+        systems: ExperienceRuntimeSystem[] = [],
+        events: RuntimeEvents = new RuntimeEvents()
     ) {
+        this.events = events;
+
         systems.forEach((system) => {
             this.register(system);
         });
@@ -38,9 +48,27 @@ export class ExperienceRuntime {
     }
 
     public update(state: ExperienceStateData): void {
+        this.events.emit(
+            'runtime:update-start',
+            { state }
+        );
+
         this.systems.forEach((system) => {
-            system.update(state);
+            try {
+                system.update(state);
+            } catch (error) {
+                console.error(
+                    'Runtime system failed.',
+                    system,
+                    error
+                );
+            }
         });
+
+        this.events.emit(
+            'runtime:update-complete',
+            { state }
+        );
     }
 
     public count(): number {
