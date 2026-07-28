@@ -628,6 +628,9 @@ import { ParticleSystem } from '../../../lib/systems/ParticleSystem';
         particleSystem
     );
 
+    experienceRuntime.initialise();
+    experienceRuntime.start();
+
     const experienceState = new ExperienceState(
         {
             audioEnabledToggle,
@@ -674,6 +677,31 @@ import { ParticleSystem } from '../../../lib/systems/ParticleSystem';
     } else {
         experienceState.initialise();
     }
+
+    let runtimeDestroyed = false;
+
+    const destroyRuntime = (): void => {
+        if (runtimeDestroyed) {
+            return;
+        }
+
+        runtimeDestroyed = true;
+
+        experienceRuntime.stop();
+        experienceRuntime.destroy();
+    };
+
+    window.addEventListener(
+        'pagehide',
+        destroyRuntime,
+        { once: true }
+    );
+
+    document.addEventListener(
+        'astro:before-swap',
+        destroyRuntime,
+        { once: true }
+    );
 
     if (
         audioEnabledToggle
