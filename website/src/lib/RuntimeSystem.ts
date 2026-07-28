@@ -8,7 +8,11 @@ export interface RuntimeSystem {
     readonly priority: number;
     enabled: boolean;
 
+    initialise?(): void;
+    start?(): void;
     update(state: ExperienceStateData): void;
+    stop?(): void;
+    destroy?(): void;
 }
 
 export interface RuntimeSystemDetails {

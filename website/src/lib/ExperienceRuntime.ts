@@ -119,6 +119,88 @@ export class ExperienceRuntime {
             }));
     }
 
+    public initialise(): void {
+        this.callLifecycleMethod(
+            'initialise'
+        );
+    }
+
+    public start(): void {
+        this.callLifecycleMethod(
+            'start'
+        );
+    }
+
+    public stop(): void {
+        this.callLifecycleMethod(
+            'stop',
+            true
+        );
+    }
+
+    public destroy(): void {
+        this.callLifecycleMethod(
+            'destroy',
+            true
+        );
+
+        this.systems.clear();
+    }
+
+    private callLifecycleMethod(
+        methodName:
+            'initialise' |
+            'start' |
+            'stop' |
+            'destroy',
+        reverseOrder = false
+    ): void {
+        const orderedSystems =
+            Array.from(
+                this.systems.values()
+            ).sort(
+                (firstSystem, secondSystem) =>
+                    firstSystem.priority -
+                    secondSystem.priority
+            );
+
+        if (reverseOrder) {
+            orderedSystems.reverse();
+        }
+
+        orderedSystems.forEach((system) => {
+            const requiresEnabledSystem =
+                methodName === 'initialise' ||
+                methodName === 'start';
+
+            if (
+                requiresEnabledSystem &&
+                !system.enabled
+            ) {
+                return;
+            }
+
+            const lifecycleMethod =
+                system[methodName];
+
+            if (
+                typeof lifecycleMethod
+                !== 'function'
+            ) {
+                return;
+            }
+
+            try {
+                lifecycleMethod.call(system);
+            } catch (error) {
+                console.error(
+                    `Runtime system "${system.id}" failed during ${methodName}().`,
+                    error
+                );
+            }
+        });
+    }
+
     public update(state: ExperienceStateData): void {
         this.events.emit(
             'runtime:update-start',
