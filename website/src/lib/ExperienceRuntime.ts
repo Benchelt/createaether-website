@@ -6,19 +6,23 @@ import {
     RuntimeEvents
 } from './RuntimeEvents';
 
-export interface ExperienceRuntimeSystem {
-    update(state: ExperienceStateData): void;
-}
+import type {
+    RuntimeSystem,
+    RuntimeSystemDetails
+} from './RuntimeSystem';
+
+export type ExperienceRuntimeSystem =
+    RuntimeSystem;
 
 export class ExperienceRuntime {
     private readonly systems =
-        new Set<ExperienceRuntimeSystem>();
+        new Map<string, RuntimeSystem>();
 
     public readonly events:
         RuntimeEvents;
 
     constructor(
-        systems: ExperienceRuntimeSystem[] = [],
+        systems: RuntimeSystem[] = [],
         events: RuntimeEvents = new RuntimeEvents()
     ) {
         this.events = events;
@@ -29,22 +33,90 @@ export class ExperienceRuntime {
     }
 
     public register(
-        system: ExperienceRuntimeSystem
+        system: RuntimeSystem
     ): () => void {
         if (
             !system ||
+            typeof system.id !== 'string' ||
+            system.id.trim() === '' ||
             typeof system.update !== 'function'
         ) {
             throw new TypeError(
-                'Experience runtime systems must provide an update method.'
+                'Runtime systems must provide an id and update method.'
             );
         }
 
-        this.systems.add(system);
+        if (this.systems.has(system.id)) {
+            throw new Error(
+                `Runtime system "${system.id}" is already registered.`
+            );
+        }
+
+        this.systems.set(
+            system.id,
+            system
+        );
 
         return () => {
-            this.systems.delete(system);
+            this.unregister(system.id);
         };
+    }
+
+    public unregister(
+        systemId: string
+    ): boolean {
+        return this.systems.delete(systemId);
+    }
+
+    public get(
+        systemId: string
+    ): RuntimeSystem | null {
+        return this.systems.get(systemId) ?? null;
+    }
+
+    public has(systemId: string): boolean {
+        return this.systems.has(systemId);
+    }
+
+    public enable(systemId: string): boolean {
+        const system = this.systems.get(systemId);
+
+        if (!system) {
+            return false;
+        }
+
+        system.enabled = true;
+
+        return true;
+    }
+
+    public disable(systemId: string): boolean {
+        const system = this.systems.get(systemId);
+
+        if (!system) {
+            return false;
+        }
+
+        system.enabled = false;
+
+        return true;
+    }
+
+    public list(): RuntimeSystemDetails[] {
+        return Array.from(
+            this.systems.values()
+        )
+            .sort(
+                (firstSystem, secondSystem) =>
+                    firstSystem.priority -
+                    secondSystem.priority
+            )
+            .map((system) => ({
+                id: system.id,
+                version: system.version,
+                priority: system.priority,
+                enabled: system.enabled
+            }));
     }
 
     public update(state: ExperienceStateData): void {
@@ -53,13 +125,25 @@ export class ExperienceRuntime {
             { state }
         );
 
-        this.systems.forEach((system) => {
+        const orderedSystems =
+            Array.from(
+                this.systems.values()
+            ).sort(
+                (firstSystem, secondSystem) =>
+                    firstSystem.priority -
+                    secondSystem.priority
+            );
+
+        orderedSystems.forEach((system) => {
+            if (!system.enabled) {
+                return;
+            }
+
             try {
                 system.update(state);
             } catch (error) {
                 console.error(
-                    'Runtime system failed.',
-                    system,
+                    `Runtime system "${system.id}" failed.`,
                     error
                 );
             }

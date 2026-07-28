@@ -16,6 +16,11 @@ import type {
 
 export class AudioSystem
     implements ExperienceRuntimeSystem {
+    public readonly id = 'audio';
+    public readonly version = '0.11.0';
+    public readonly priority = 20;
+    public enabled = true;
+
     private readonly audioElement:
         HTMLAudioElement | null;
 

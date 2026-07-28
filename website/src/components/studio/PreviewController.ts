@@ -16,6 +16,11 @@ export interface PreviewElements {
 
 export class PreviewController
     implements ExperienceRuntimeSystem {
+    public readonly id = 'studio-preview';
+    public readonly version = '0.11.0';
+    public readonly priority = 10;
+    public enabled = true;
+
     private readonly elements: PreviewElements;
 
     constructor(elements: PreviewElements) {
