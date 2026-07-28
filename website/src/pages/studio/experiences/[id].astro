@@ -544,6 +544,12 @@ const selectedAudioTrack =
 
 </style>
 
+<script
+    id="experience-configuration"
+    type="application/json"
+    set:html={JSON.stringify(experience)}
+></script>
+
 <audio
     id="experience-audio"
     src={selectedAudioTrack.src}
@@ -556,6 +562,8 @@ const selectedAudioTrack =
 <script>
     import { ExperienceState } from '../../../lib/ExperienceState';
     import { ExperienceRuntime } from '../../../lib/ExperienceRuntime';
+    import { ExperienceLoader } from '../../../lib/ExperienceLoader';
+    import type { Experience } from '../../../lib/models/Experience';
     import { AudioSystem } from '../../../lib/systems/AudioSystem';
     import { PreviewController } from '../../../components/studio/PreviewController';
     import { audioTracks } from '../../../data/audio/tracks';
@@ -572,6 +580,11 @@ const selectedAudioTrack =
 
     const previewStage = document.querySelector('.preview-stage');
     const audioElement = document.querySelector('#experience-audio');
+
+    const experienceConfiguration =
+        document.querySelector(
+            '#experience-configuration'
+        );
 
     const audioPlaybackToggle =
         document.querySelector('#audio-playback-toggle');
@@ -621,6 +634,38 @@ const selectedAudioTrack =
         },
         (state) => experienceRuntime.update(state)
     );
+
+    const experienceLoader =
+        new ExperienceLoader(
+            experienceRuntime,
+            experienceState
+        );
+
+    if (
+        experienceConfiguration
+        instanceof HTMLScriptElement
+    ) {
+        try {
+            const initialExperience =
+                JSON.parse(
+                    experienceConfiguration.textContent
+                        ?? ''
+                ) as Experience;
+
+            experienceLoader.load(
+                initialExperience
+            );
+        } catch (error) {
+            console.error(
+                'Unable to load the initial experience.',
+                error
+            );
+
+            experienceState.initialise();
+        }
+    } else {
+        experienceState.initialise();
+    }
 
     if (
         audioEnabledToggle
@@ -723,7 +768,6 @@ const selectedAudioTrack =
         updateAudioTransport();
     }
 
-    experienceState.initialise();
 </script>
 
 </StudioLayout>

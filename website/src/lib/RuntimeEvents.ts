@@ -6,7 +6,25 @@ import type {
     AudioTrack
 } from './models/AudioTrack';
 
+import type {
+    Experience
+} from './models/Experience';
+
 export interface RuntimeEventMap {
+    'experience:loading': {
+        experience: Experience;
+        previousExperience: Experience | null;
+    };
+
+    'experience:loaded': {
+        experience: Experience;
+        previousExperience: Experience | null;
+    };
+
+    'experience:unloaded': {
+        experience: Experience;
+    };
+
     'runtime:update-start': {
         state: ExperienceStateData;
     };

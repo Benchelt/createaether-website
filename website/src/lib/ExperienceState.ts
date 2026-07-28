@@ -46,6 +46,44 @@ export class ExperienceState {
         };
     }
 
+    private writeControls(): void {
+        const {
+            audioEnabledToggle,
+            volumeControl,
+            particlesToggle,
+            lightingToggle,
+            fogToggle
+        } = this.controls;
+
+        if (
+            audioEnabledToggle
+            instanceof HTMLInputElement
+        ) {
+            audioEnabledToggle.checked =
+                this.data.audio.enabled;
+        }
+
+        if (volumeControl instanceof HTMLInputElement) {
+            volumeControl.value =
+                String(this.data.audio.volume);
+        }
+
+        if (particlesToggle instanceof HTMLInputElement) {
+            particlesToggle.checked =
+                this.data.atmosphere.particles;
+        }
+
+        if (lightingToggle instanceof HTMLInputElement) {
+            lightingToggle.checked =
+                this.data.atmosphere.lighting;
+        }
+
+        if (fogToggle instanceof HTMLInputElement) {
+            fogToggle.checked =
+                this.data.atmosphere.fog;
+        }
+    }
+
     private readControls(): void {
         const {
             audioEnabledToggle,
@@ -80,6 +118,21 @@ export class ExperienceState {
         if (fogToggle instanceof HTMLInputElement) {
             this.data.atmosphere.fog = fogToggle.checked;
         }
+    }
+
+    public load(
+        state: ExperienceStateData
+    ): void {
+        this.data.audio = {
+            ...state.audio
+        };
+
+        this.data.atmosphere = {
+            ...state.atmosphere
+        };
+
+        this.writeControls();
+        this.render(this.data);
     }
 
     public update(): void {
