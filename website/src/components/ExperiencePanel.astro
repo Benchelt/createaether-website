@@ -6,10 +6,10 @@
     <div>
       <p class="panel-kicker">
         <span class="panel-dot" aria-hidden="true"></span>
-        Interactive preview
+        Live Studio preview
       </p>
 
-      <h2 id="experience-panel-title">Aether Console</h2>
+      <h2 id="experience-panel-title">Studio Preview</h2>
     </div>
 
     <span class="panel-status" data-panel-status>Temple active</span>
@@ -137,6 +137,14 @@
       Temple experience is active.
     </span>
   </div>
+
+  <a
+    class="panel-studio-link"
+    href="/studio/experiences/temple/"
+    data-open-studio
+  >
+    Open Temple in Studio →
+  </a>
 </section>
 
 <script>
@@ -189,6 +197,9 @@
 
   const panelStatus =
     panel?.querySelector<HTMLElement>('[data-panel-status]');
+
+  const openStudioLink =
+    panel?.querySelector<HTMLAnchorElement>('[data-open-studio]');
 
   function isExperienceName(value: unknown): value is ExperienceName {
     return value === 'temple' || value === 'forest' || value === 'ocean';
@@ -274,6 +285,14 @@
 
     if (glowControl) {
       glowControl.checked = state.glow;
+    }
+
+    if (openStudioLink) {
+      openStudioLink.href =
+        `/studio/experiences/${state.experience}/`;
+
+      openStudioLink.textContent =
+        `Open ${displayName} in Studio →`;
     }
 
     if (intensityControl) {
@@ -831,4 +850,30 @@
       transition: none;
     }
   }
+
+  .panel-studio-link {
+    margin-top: 18px;
+    min-height: 44px;
+    padding: 0 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(102, 227, 255, 0.24);
+    border-radius: 12px;
+    color: #8eeaff;
+    background: rgba(102, 227, 255, 0.055);
+    font-size: 0.86rem;
+    font-weight: 700;
+    transition:
+      border-color 160ms ease,
+      background 160ms ease,
+      color 160ms ease;
+  }
+
+  .panel-studio-link:hover {
+    color: #ffffff;
+    border-color: rgba(102, 227, 255, 0.48);
+    background: rgba(102, 227, 255, 0.1);
+  }
+
 </style>
