@@ -10,7 +10,6 @@ export interface PreviewElements {
     volumeValue: Element | null;
     previewStage: Element | null;
     particlesStatus: Element | null;
-    fogStatus: Element | null;
 }
 
 export class PreviewController
@@ -57,33 +56,8 @@ export class PreviewController
                     ? 'Particles active'
                     : 'Particles disabled';
         }
-    }
-    private updateFog(
-        state: ExperienceStateData
-    ): void {
-        const {
-            previewStage,
-            fogStatus
-        } = this.elements;
-
-        if (previewStage instanceof HTMLElement) {
-            previewStage.classList.toggle(
-                'preview-stage--fog-disabled',
-                !state.atmosphere.fog
-            );
-        }
-
-        if (fogStatus instanceof HTMLElement) {
-            fogStatus.textContent =
-                state.atmosphere.fog
-                    ? 'Fog active'
-                    : 'Fog disabled';
-        }
-    }
-
-    public update(state: ExperienceStateData): void {
+    }    public update(state: ExperienceStateData): void {
         this.updateVolume(state);
         this.updateParticles(state);
-        this.updateFog(state);
     }
 }
