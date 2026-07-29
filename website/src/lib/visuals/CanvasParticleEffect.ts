@@ -68,7 +68,7 @@ export class CanvasParticleEffect
     public readonly description =
         'Renders experience-configured particles through the Canvas renderer.';
 
-    public readonly version = '0.20.0';
+    public readonly version = '0.21.1';
 
     public readonly category:
         VisualEffectCategory = 'particles';
@@ -85,6 +85,9 @@ export class CanvasParticleEffect
         (() => void) | null = null;
 
     private unsubscribeExperience:
+        (() => void) | null = null;
+
+    private unsubscribeSettings:
         (() => void) | null = null;
 
     private readonly particles: Particle[] = [];
@@ -108,6 +111,16 @@ export class CanvasParticleEffect
                         this.applySettings(
                             experience.particles
                         );
+                    }
+                );
+        }
+
+        if (!this.unsubscribeSettings) {
+            this.unsubscribeSettings =
+                this.events.on(
+                    'particles:settings-changed',
+                    ({ settings }) => {
+                        this.applySettings(settings);
                     }
                 );
         }
@@ -173,6 +186,9 @@ export class CanvasParticleEffect
     public destroy(): void {
         this.unsubscribeExperience?.();
         this.unsubscribeExperience = null;
+
+        this.unsubscribeSettings?.();
+        this.unsubscribeSettings = null;
 
         this.unregisterRenderer?.();
         this.unregisterRenderer = null;

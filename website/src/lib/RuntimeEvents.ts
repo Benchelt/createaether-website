@@ -7,7 +7,8 @@ import type {
 } from './models/AudioTrack';
 
 import type {
-    Experience
+    Experience,
+    ParticleSettings
 } from './models/Experience';
 
 export interface RuntimeEventMap {
@@ -23,6 +24,10 @@ export interface RuntimeEventMap {
 
     'experience:unloaded': {
         experience: Experience;
+    };
+
+    'particles:settings-changed': {
+        settings: ParticleSettings;
     };
 
     'runtime:update-start': {

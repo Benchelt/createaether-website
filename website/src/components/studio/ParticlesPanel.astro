@@ -18,73 +18,196 @@ checked={experience.atmosphere.particles}
 
 <label>
 Count
-<output>{particles.count}</output>
+<output id="particle-count-value">{particles.count}</output>
 </label>
 
 <input
+id="particle-count-control"
 type="range"
 min="0"
 max="100"
+step="1"
 value={particles.count}
 />
 
 <label>Colour</label>
 
 <input
+id="particle-colour-control"
 type="color"
 value={particles.colour}
 />
 
 <label>
 Glow
-<output>{particles.glow}</output>
+<output id="particle-glow-value">{particles.glow}</output>
 </label>
 
 <input
+id="particle-glow-control"
 type="range"
 min="0"
 max="20"
+step="0.5"
 value={particles.glow}
 />
 
 <label>Radius</label>
 
-<div class="dual-values">
-<span>{particles.minRadius}</span>
-<span>{particles.maxRadius}</span>
+<div class="range-pair">
+    <div>
+        <span>Minimum</span>
+        <output id="particle-min-radius-value">
+            {particles.minRadius}
+        </output>
+
+        <input
+            id="particle-min-radius-control"
+            type="range"
+            min="0.5"
+            max="10"
+            step="0.5"
+            value={particles.minRadius}
+        />
+    </div>
+
+    <div>
+        <span>Maximum</span>
+        <output id="particle-max-radius-value">
+            {particles.maxRadius}
+        </output>
+
+        <input
+            id="particle-max-radius-control"
+            type="range"
+            min="0.5"
+            max="10"
+            step="0.5"
+            value={particles.maxRadius}
+        />
+    </div>
 </div>
 
 <label>Speed</label>
 
-<div class="dual-values">
-<span>{particles.minSpeed}</span>
-<span>{particles.maxSpeed}</span>
+<div class="range-pair">
+    <div>
+        <span>Minimum</span>
+        <output id="particle-min-speed-value">
+            {particles.minSpeed}
+        </output>
+
+        <input
+            id="particle-min-speed-control"
+            type="range"
+            min="0"
+            max="50"
+            step="1"
+            value={particles.minSpeed}
+        />
+    </div>
+
+    <div>
+        <span>Maximum</span>
+        <output id="particle-max-speed-value">
+            {particles.maxSpeed}
+        </output>
+
+        <input
+            id="particle-max-speed-control"
+            type="range"
+            min="0"
+            max="50"
+            step="1"
+            value={particles.maxSpeed}
+        />
+    </div>
 </div>
 
 <label>
 Drift
-<output>{particles.drift}</output>
+<output id="particle-drift-value">{particles.drift}</output>
 </label>
 
 <input
+id="particle-drift-control"
 type="range"
 min="0"
 max="20"
+step="0.5"
 value={particles.drift}
 />
 
 <label>Opacity</label>
 
-<div class="dual-values">
-<span>{particles.minOpacity}</span>
-<span>{particles.maxOpacity}</span>
+<div class="range-pair">
+    <div>
+        <span>Minimum</span>
+        <output id="particle-min-opacity-value">
+            {particles.minOpacity}
+        </output>
+
+        <input
+            id="particle-min-opacity-control"
+            type="range"
+            min="0"
+            max="1"
+            step="0.05"
+            value={particles.minOpacity}
+        />
+    </div>
+
+    <div>
+        <span>Maximum</span>
+        <output id="particle-max-opacity-value">
+            {particles.maxOpacity}
+        </output>
+
+        <input
+            id="particle-max-opacity-control"
+            type="range"
+            min="0"
+            max="1"
+            step="0.05"
+            value={particles.maxOpacity}
+        />
+    </div>
 </div>
 
 <label>Lifetime</label>
 
-<div class="dual-values">
-<span>{particles.minLifetime}s</span>
-<span>{particles.maxLifetime}s</span>
+<div class="range-pair">
+    <div>
+        <span>Minimum</span>
+        <output id="particle-min-lifetime-value">
+            {particles.minLifetime}s
+        </output>
+
+        <input
+            id="particle-min-lifetime-control"
+            type="range"
+            min="1"
+            max="30"
+            step="1"
+            value={particles.minLifetime}
+        />
+    </div>
+
+    <div>
+        <span>Maximum</span>
+        <output id="particle-max-lifetime-value">
+            {particles.maxLifetime}s
+        </output>
+
+        <input
+            id="particle-max-lifetime-control"
+            type="range"
+            min="1"
+            max="30"
+            step="1"
+            value={particles.maxLifetime}
+        />
+    </div>
 </div>
 
 </div>
@@ -135,6 +258,31 @@ justify-content:space-between;
 color:#94a3b8;
 font-size:.82rem;
 margin-bottom:.5rem;
+}
+
+.range-pair{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:.85rem;
+margin-bottom:.75rem;
+}
+
+.range-pair > div{
+min-width:0;
+}
+
+.range-pair span{
+display:flex;
+justify-content:space-between;
+color:#94a3b8;
+font-size:.75rem;
+margin-bottom:.35rem;
+}
+
+.range-pair output{
+display:block;
+margin-bottom:.25rem;
+font-size:.82rem;
 }
 
 output{

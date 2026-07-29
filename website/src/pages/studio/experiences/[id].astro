@@ -517,7 +517,10 @@ const selectedAudioTrack =
     import { ExperienceState } from '../../../lib/ExperienceState';
     import { ExperienceRuntime } from '../../../lib/ExperienceRuntime';
     import { ExperienceLoader } from '../../../lib/ExperienceLoader';
-    import type { Experience } from '../../../lib/models/Experience';
+    import type {
+        Experience,
+        ParticleSettings
+    } from '../../../lib/models/Experience';
     import { AudioSystem } from '../../../lib/systems/AudioSystem';
     import { VisualSystem } from '../../../lib/systems/VisualSystem';
     import { CssLightingEffect } from '../../../lib/visuals/CssLightingEffect';
@@ -537,6 +540,75 @@ const selectedAudioTrack =
     const particlesToggle = document.querySelector('#particles-toggle');
     const lightingToggle = document.querySelector('#lighting-toggle');
     const fogToggle = document.querySelector('#fog-toggle');
+
+    const particleCountControl =
+        document.querySelector('#particle-count-control');
+
+    const particleCountValue =
+        document.querySelector('#particle-count-value');
+
+    const particleColourControl =
+        document.querySelector('#particle-colour-control');
+
+    const particleGlowControl =
+        document.querySelector('#particle-glow-control');
+
+    const particleGlowValue =
+        document.querySelector('#particle-glow-value');
+
+    const particleDriftControl =
+        document.querySelector('#particle-drift-control');
+
+    const particleDriftValue =
+        document.querySelector('#particle-drift-value');
+
+    const particleMinRadiusControl =
+        document.querySelector('#particle-min-radius-control');
+
+    const particleMinRadiusValue =
+        document.querySelector('#particle-min-radius-value');
+
+    const particleMaxRadiusControl =
+        document.querySelector('#particle-max-radius-control');
+
+    const particleMaxRadiusValue =
+        document.querySelector('#particle-max-radius-value');
+
+    const particleMinSpeedControl =
+        document.querySelector('#particle-min-speed-control');
+
+    const particleMinSpeedValue =
+        document.querySelector('#particle-min-speed-value');
+
+    const particleMaxSpeedControl =
+        document.querySelector('#particle-max-speed-control');
+
+    const particleMaxSpeedValue =
+        document.querySelector('#particle-max-speed-value');
+
+    const particleMinOpacityControl =
+        document.querySelector('#particle-min-opacity-control');
+
+    const particleMinOpacityValue =
+        document.querySelector('#particle-min-opacity-value');
+
+    const particleMaxOpacityControl =
+        document.querySelector('#particle-max-opacity-control');
+
+    const particleMaxOpacityValue =
+        document.querySelector('#particle-max-opacity-value');
+
+    const particleMinLifetimeControl =
+        document.querySelector('#particle-min-lifetime-control');
+
+    const particleMinLifetimeValue =
+        document.querySelector('#particle-min-lifetime-value');
+
+    const particleMaxLifetimeControl =
+        document.querySelector('#particle-max-lifetime-control');
+
+    const particleMaxLifetimeValue =
+        document.querySelector('#particle-max-lifetime-value');
 
     const previewStage = document.querySelector('.preview-stage');
     const previewCanvas = document.querySelector('.preview-canvas');
@@ -666,6 +738,130 @@ const selectedAudioTrack =
             experienceState
         );
 
+    let editableExperience: Experience | null = null;
+
+    const emitParticleSettings = (): void => {
+        if (!editableExperience) {
+            return;
+        }
+
+        experienceRuntime.events.emit(
+            'particles:settings-changed',
+            {
+                settings: {
+                    ...editableExperience.particles
+                }
+            }
+        );
+    };
+
+    type ParticleRangeKey =
+        | 'minRadius'
+        | 'maxRadius'
+        | 'minSpeed'
+        | 'maxSpeed'
+        | 'minOpacity'
+        | 'maxOpacity'
+        | 'minLifetime'
+        | 'maxLifetime';
+
+    interface ParticleRangeBinding {
+        control: Element | null;
+        output: Element | null;
+        key: ParticleRangeKey;
+        pairedControl: Element | null;
+        pairedOutput: Element | null;
+        pairedKey: ParticleRangeKey;
+        boundary: 'minimum' | 'maximum';
+        suffix?: string;
+    }
+
+    const writeRangeOutput = (
+        output: Element | null,
+        value: number,
+        suffix = ''
+    ): void => {
+        if (output instanceof HTMLOutputElement) {
+            output.value = `${value}${suffix}`;
+        }
+    };
+
+    const bindParticleRange = ({
+        control,
+        output,
+        key,
+        pairedControl,
+        pairedOutput,
+        pairedKey,
+        boundary,
+        suffix = ''
+    }: ParticleRangeBinding): void => {
+        if (!(control instanceof HTMLInputElement)) {
+            return;
+        }
+
+        control.addEventListener(
+            'input',
+            () => {
+                if (!editableExperience) {
+                    return;
+                }
+
+                let value = Number(control.value);
+
+                if (!Number.isFinite(value)) {
+                    return;
+                }
+
+                const pairedValue =
+                    editableExperience.particles[pairedKey];
+
+                if (
+                    boundary === 'minimum' &&
+                    value > pairedValue
+                ) {
+                    value = pairedValue;
+                    control.value = String(value);
+                }
+
+                if (
+                    boundary === 'maximum' &&
+                    value < pairedValue
+                ) {
+                    value = pairedValue;
+                    control.value = String(value);
+                }
+
+                editableExperience.particles[key] = value;
+
+                writeRangeOutput(
+                    output,
+                    value,
+                    suffix
+                );
+
+                if (
+                    pairedControl instanceof HTMLInputElement
+                ) {
+                    pairedControl.value =
+                        String(
+                            editableExperience.particles[
+                                pairedKey
+                            ]
+                        );
+                }
+
+                writeRangeOutput(
+                    pairedOutput,
+                    editableExperience.particles[pairedKey],
+                    suffix
+                );
+
+                emitParticleSettings();
+            }
+        );
+    };
+
     if (
         experienceConfiguration
         instanceof HTMLScriptElement
@@ -677,8 +873,21 @@ const selectedAudioTrack =
                         ?? ''
                 ) as Experience;
 
+            editableExperience = {
+                ...initialExperience,
+                audio: {
+                    ...initialExperience.audio
+                },
+                atmosphere: {
+                    ...initialExperience.atmosphere
+                },
+                particles: {
+                    ...initialExperience.particles
+                }
+            };
+
             experienceLoader.load(
-                initialExperience
+                editableExperience
             );
         } catch (error) {
             console.error(
@@ -740,6 +949,205 @@ const selectedAudioTrack =
             experienceState.update();
         });
     }
+
+
+    if (
+        particleCountControl instanceof HTMLInputElement
+    ) {
+        particleCountControl.addEventListener(
+            'input',
+            () => {
+                if (!editableExperience) {
+                    return;
+                }
+
+                const count = Math.max(
+                    0,
+                    Math.min(
+                        100,
+                        Math.round(
+                            Number(particleCountControl.value)
+                        )
+                    )
+                );
+
+                editableExperience.particles.count = count;
+
+                if (
+                    particleCountValue
+                    instanceof HTMLOutputElement
+                ) {
+                    particleCountValue.value = String(count);
+                }
+
+                emitParticleSettings();
+            }
+        );
+    }
+
+    if (
+        particleColourControl instanceof HTMLInputElement
+    ) {
+        particleColourControl.addEventListener(
+            'input',
+            () => {
+                if (!editableExperience) {
+                    return;
+                }
+
+                editableExperience.particles.colour =
+                    particleColourControl.value;
+
+                emitParticleSettings();
+            }
+        );
+    }
+
+    if (
+        particleGlowControl instanceof HTMLInputElement
+    ) {
+        particleGlowControl.addEventListener(
+            'input',
+            () => {
+                if (!editableExperience) {
+                    return;
+                }
+
+                const glow = Math.max(
+                    0,
+                    Math.min(
+                        20,
+                        Number(particleGlowControl.value)
+                    )
+                );
+
+                editableExperience.particles.glow = glow;
+
+                if (
+                    particleGlowValue
+                    instanceof HTMLOutputElement
+                ) {
+                    particleGlowValue.value = String(glow);
+                }
+
+                emitParticleSettings();
+            }
+        );
+    }
+
+    if (
+        particleDriftControl instanceof HTMLInputElement
+    ) {
+        particleDriftControl.addEventListener(
+            'input',
+            () => {
+                if (!editableExperience) {
+                    return;
+                }
+
+                const drift = Math.max(
+                    0,
+                    Math.min(
+                        20,
+                        Number(particleDriftControl.value)
+                    )
+                );
+
+                editableExperience.particles.drift = drift;
+
+                if (
+                    particleDriftValue
+                    instanceof HTMLOutputElement
+                ) {
+                    particleDriftValue.value = String(drift);
+                }
+
+                emitParticleSettings();
+            }
+        );
+    }
+
+    bindParticleRange({
+        control: particleMinRadiusControl,
+        output: particleMinRadiusValue,
+        key: 'minRadius',
+        pairedControl: particleMaxRadiusControl,
+        pairedOutput: particleMaxRadiusValue,
+        pairedKey: 'maxRadius',
+        boundary: 'minimum'
+    });
+
+    bindParticleRange({
+        control: particleMaxRadiusControl,
+        output: particleMaxRadiusValue,
+        key: 'maxRadius',
+        pairedControl: particleMinRadiusControl,
+        pairedOutput: particleMinRadiusValue,
+        pairedKey: 'minRadius',
+        boundary: 'maximum'
+    });
+
+    bindParticleRange({
+        control: particleMinSpeedControl,
+        output: particleMinSpeedValue,
+        key: 'minSpeed',
+        pairedControl: particleMaxSpeedControl,
+        pairedOutput: particleMaxSpeedValue,
+        pairedKey: 'maxSpeed',
+        boundary: 'minimum'
+    });
+
+    bindParticleRange({
+        control: particleMaxSpeedControl,
+        output: particleMaxSpeedValue,
+        key: 'maxSpeed',
+        pairedControl: particleMinSpeedControl,
+        pairedOutput: particleMinSpeedValue,
+        pairedKey: 'minSpeed',
+        boundary: 'maximum'
+    });
+
+    bindParticleRange({
+        control: particleMinOpacityControl,
+        output: particleMinOpacityValue,
+        key: 'minOpacity',
+        pairedControl: particleMaxOpacityControl,
+        pairedOutput: particleMaxOpacityValue,
+        pairedKey: 'maxOpacity',
+        boundary: 'minimum'
+    });
+
+    bindParticleRange({
+        control: particleMaxOpacityControl,
+        output: particleMaxOpacityValue,
+        key: 'maxOpacity',
+        pairedControl: particleMinOpacityControl,
+        pairedOutput: particleMinOpacityValue,
+        pairedKey: 'minOpacity',
+        boundary: 'maximum'
+    });
+
+    bindParticleRange({
+        control: particleMinLifetimeControl,
+        output: particleMinLifetimeValue,
+        key: 'minLifetime',
+        pairedControl: particleMaxLifetimeControl,
+        pairedOutput: particleMaxLifetimeValue,
+        pairedKey: 'maxLifetime',
+        boundary: 'minimum',
+        suffix: 's'
+    });
+
+    bindParticleRange({
+        control: particleMaxLifetimeControl,
+        output: particleMaxLifetimeValue,
+        key: 'maxLifetime',
+        pairedControl: particleMinLifetimeControl,
+        pairedOutput: particleMinLifetimeValue,
+        pairedKey: 'minLifetime',
+        boundary: 'maximum',
+        suffix: 's'
+    });
 
     if (lightingToggle instanceof HTMLInputElement) {
         lightingToggle.addEventListener('change', () => {
