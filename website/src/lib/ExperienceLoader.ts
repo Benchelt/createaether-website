@@ -47,10 +47,11 @@ export class ExperienceLoader {
 
         if (
             !experience.audio ||
-            !experience.atmosphere
+            !experience.atmosphere ||
+            !experience.particles
         ) {
             throw new TypeError(
-                'Experiences must provide audio and atmosphere settings.'
+                'Experiences must provide audio, atmosphere and particle settings.'
             );
         }
     }
@@ -65,6 +66,10 @@ export class ExperienceLoader {
 
             atmosphere: {
                 ...experience.atmosphere
+            },
+
+            particles: {
+                ...experience.particles
             }
         };
     }

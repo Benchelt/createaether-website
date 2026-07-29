@@ -619,7 +619,10 @@ const selectedAudioTrack =
 
     const canvasParticleEffect =
         canvasRenderer
-            ? new CanvasParticleEffect(canvasRenderer)
+            ? new CanvasParticleEffect(
+                canvasRenderer,
+                experienceRuntime.events
+            )
             : null;
 
     if (canvasParticleEffect) {

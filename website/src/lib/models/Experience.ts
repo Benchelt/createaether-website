@@ -10,6 +10,26 @@ export interface AtmosphereSettings {
     fog: boolean;
 }
 
+export interface ParticleSettings {
+    count: number;
+    colour: string;
+    glow: number;
+
+    minRadius: number;
+    maxRadius: number;
+
+    minSpeed: number;
+    maxSpeed: number;
+
+    drift: number;
+
+    minOpacity: number;
+    maxOpacity: number;
+
+    minLifetime: number;
+    maxLifetime: number;
+}
+
 export interface Experience {
     id: string;
     name: string;
@@ -18,4 +38,5 @@ export interface Experience {
 
     audio: AudioSettings;
     atmosphere: AtmosphereSettings;
+    particles: ParticleSettings;
 }

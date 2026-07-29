@@ -12,5 +12,19 @@
     "particles": true,
     "lighting": true,
     "fog": true
+  },
+  "particles": {
+    "count": 58,
+    "colour": "#bbf7d0",
+    "glow": 4,
+    "minRadius": 0.8,
+    "maxRadius": 2.8,
+    "minSpeed": 3,
+    "maxSpeed": 10,
+    "drift": 7,
+    "minOpacity": 0.25,
+    "maxOpacity": 0.75,
+    "minLifetime": 7,
+    "maxLifetime": 15
   }
 }

@@ -3,6 +3,14 @@ import type {
 } from '../ExperienceState';
 
 import type {
+    ParticleSettings
+} from '../models/Experience';
+
+import type {
+    RuntimeEvents
+} from '../RuntimeEvents';
+
+import type {
     CanvasRenderable,
     CanvasRenderFrame
 } from '../rendering/CanvasRenderer';
@@ -30,6 +38,26 @@ interface Particle {
     lifetime: number;
 }
 
+const defaultParticleSettings: ParticleSettings = {
+    count: 42,
+    colour: '#bfdbfe',
+    glow: 5,
+
+    minRadius: 1,
+    maxRadius: 3.5,
+
+    minSpeed: 5,
+    maxSpeed: 15,
+
+    drift: 4,
+
+    minOpacity: 0.35,
+    maxOpacity: 0.9,
+
+    minLifetime: 5,
+    maxLifetime: 12
+};
+
 export class CanvasParticleEffect
     implements VisualEffect, CanvasRenderable {
 
@@ -38,9 +66,9 @@ export class CanvasParticleEffect
     public readonly name = 'Canvas Particles';
 
     public readonly description =
-        'Renders a field of animated particles through the Canvas renderer.';
+        'Renders experience-configured particles through the Canvas renderer.';
 
-    public readonly version = '0.19.0';
+    public readonly version = '0.20.0';
 
     public readonly category:
         VisualEffectCategory = 'particles';
@@ -49,24 +77,40 @@ export class CanvasParticleEffect
 
     private active = true;
 
+    private settings: ParticleSettings = {
+        ...defaultParticleSettings
+    };
+
     private unregisterRenderer:
         (() => void) | null = null;
 
-    private readonly targetParticleCount = 42;
+    private unsubscribeExperience:
+        (() => void) | null = null;
 
     private readonly particles: Particle[] = [];
 
     constructor(
-        private readonly renderer: CanvasRenderer
+        private readonly renderer: CanvasRenderer,
+        private readonly events: RuntimeEvents
     ) {}
 
     public initialise(): void {
-        if (this.unregisterRenderer) {
-            return;
+        if (!this.unregisterRenderer) {
+            this.unregisterRenderer =
+                this.renderer.register(this);
         }
 
-        this.unregisterRenderer =
-            this.renderer.register(this);
+        if (!this.unsubscribeExperience) {
+            this.unsubscribeExperience =
+                this.events.on(
+                    'experience:loaded',
+                    ({ experience }) => {
+                        this.applySettings(
+                            experience.particles
+                        );
+                    }
+                );
+        }
     }
 
     public start(): void {
@@ -127,11 +171,24 @@ export class CanvasParticleEffect
     }
 
     public destroy(): void {
+        this.unsubscribeExperience?.();
+        this.unsubscribeExperience = null;
+
         this.unregisterRenderer?.();
         this.unregisterRenderer = null;
 
         this.particles.length = 0;
         this.active = false;
+    }
+
+    private applySettings(
+        settings: ParticleSettings
+    ): void {
+        this.settings = {
+            ...settings
+        };
+
+        this.particles.length = 0;
     }
 
     private ensureParticleCount(
@@ -140,7 +197,14 @@ export class CanvasParticleEffect
     ): void {
         while (
             this.particles.length
-            < this.targetParticleCount
+            > this.settings.count
+        ) {
+            this.particles.pop();
+        }
+
+        while (
+            this.particles.length
+            < this.settings.count
         ) {
             this.particles.push(
                 this.createParticle(
@@ -158,7 +222,10 @@ export class CanvasParticleEffect
         distributeAcrossScene = false
     ): Particle {
         const lifetime =
-            this.randomBetween(5, 12);
+            this.randomBetween(
+                this.settings.minLifetime,
+                this.settings.maxLifetime
+            );
 
         return {
             x: this.randomBetween(
@@ -171,16 +238,28 @@ export class CanvasParticleEffect
                 : height + this.randomBetween(4, 40),
 
             velocityX:
-                this.randomBetween(-4, 4),
+                this.randomBetween(
+                    -this.settings.drift,
+                    this.settings.drift
+                ),
 
             velocityY:
-                this.randomBetween(-15, -5),
+                -this.randomBetween(
+                    this.settings.minSpeed,
+                    this.settings.maxSpeed
+                ),
 
             radius:
-                this.randomBetween(1, 3.5),
+                this.randomBetween(
+                    this.settings.minRadius,
+                    this.settings.maxRadius
+                ),
 
             opacity:
-                this.randomBetween(0.35, 0.9),
+                this.randomBetween(
+                    this.settings.minOpacity,
+                    this.settings.maxOpacity
+                ),
 
             age: distributeAcrossScene
                 ? this.randomBetween(0, lifetime)
@@ -253,13 +332,14 @@ export class CanvasParticleEffect
         context.globalAlpha = alpha;
 
         context.shadowColor =
-            'rgba(147, 197, 253, 0.9)';
+            this.settings.colour;
 
         context.shadowBlur =
-            particle.radius * 5;
+            particle.radius
+            * this.settings.glow;
 
         context.fillStyle =
-            'rgba(191, 219, 254, 0.95)';
+            this.settings.colour;
 
         context.beginPath();
 
