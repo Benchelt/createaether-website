@@ -565,10 +565,10 @@ const selectedAudioTrack =
     import { ExperienceLoader } from '../../../lib/ExperienceLoader';
     import type { Experience } from '../../../lib/models/Experience';
     import { AudioSystem } from '../../../lib/systems/AudioSystem';
-    import { ParticleSystem } from '../../../lib/systems/ParticleSystem';
     import { VisualSystem } from '../../../lib/systems/VisualSystem';
     import { CssLightingEffect } from '../../../lib/visuals/CssLightingEffect';
     import { CssFogEffect } from '../../../lib/visuals/CssFogEffect';
+import { CssParticleEffect } from '../../../lib/visuals/CssParticleEffect';
     import { PreviewController } from '../../../components/studio/PreviewController';
     import { audioTracks } from '../../../data/audio/tracks';
 
@@ -601,9 +601,7 @@ const selectedAudioTrack =
     const fogStatus = document.querySelector('#fog-status');
 
     const previewController = new PreviewController({
-        volumeValue,
-        previewStage,
-        particlesStatus
+        volumeValue
     });
 
     const experienceRuntime = new ExperienceRuntime();
@@ -622,12 +620,6 @@ const selectedAudioTrack =
         audioSystem
     );
 
-    const particleSystem =
-        new ParticleSystem();
-
-    experienceRuntime.register(
-        particleSystem
-    );
 
     const visualSystem =
         new VisualSystem();
@@ -650,6 +642,16 @@ const selectedAudioTrack =
 
     visualSystem.register(
         cssFogEffect
+    );
+
+    const cssParticleEffect =
+        new CssParticleEffect(
+            previewStage,
+            particlesStatus
+        );
+
+    visualSystem.register(
+        cssParticleEffect
     );
 
     experienceRuntime.register(

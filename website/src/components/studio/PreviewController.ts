@@ -8,8 +8,6 @@ import type {
 
 export interface PreviewElements {
     volumeValue: Element | null;
-    previewStage: Element | null;
-    particlesStatus: Element | null;
 }
 
 export class PreviewController
@@ -35,29 +33,9 @@ export class PreviewController
         }
     }
 
-    private updateParticles(
+    public update(
         state: ExperienceStateData
     ): void {
-        const {
-            previewStage,
-            particlesStatus
-        } = this.elements;
-
-        if (previewStage instanceof HTMLElement) {
-            previewStage.classList.toggle(
-                'preview-stage--particles-disabled',
-                !state.atmosphere.particles
-            );
-        }
-
-        if (particlesStatus instanceof HTMLElement) {
-            particlesStatus.textContent =
-                state.atmosphere.particles
-                    ? 'Particles active'
-                    : 'Particles disabled';
-        }
-    }    public update(state: ExperienceStateData): void {
         this.updateVolume(state);
-        this.updateParticles(state);
     }
 }

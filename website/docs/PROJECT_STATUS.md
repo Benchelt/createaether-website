@@ -107,3 +107,33 @@ git status
 git log --oneline -5
 
 3. Continue with the Next Sprint.
+
+# Current Status
+
+## Version
+
+v0.16.0
+
+## Completed
+
+- ✅ Visual Effects Framework
+- ✅ CssLightingEffect
+- ✅ CssFogEffect
+- ✅ VisualEffect metadata
+- ✅ Visual Effect Manager
+- ✅ Dynamic registration
+- ✅ Dynamic lifecycle management
+- ✅ Effect enable / disable
+- ✅ Effect discovery API
+
+## Next Sprint (v0.17.0)
+
+Goal:
+Introduce the first Canvas renderer.
+
+Planned work:
+
+- CanvasRenderer
+- CanvasParticleEffect
+- Mixed CSS + Canvas rendering
+- Foundation for future WebGL effects
