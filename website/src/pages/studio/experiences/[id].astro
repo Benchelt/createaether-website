@@ -3,6 +3,7 @@ import StudioLayout from '../../../layouts/StudioLayout.astro';
 import GeneralPanel from '../../../components/studio/GeneralPanel.astro';
 import AudioPanel from '../../../components/studio/AudioPanel.astro';
 import AtmospherePanel from '../../../components/studio/AtmospherePanel.astro';
+import ParticlesPanel from '../../../components/studio/ParticlesPanel.astro';
 import { experiences } from '../../../data/experiences';
 import {
     audioTracks,
@@ -45,6 +46,8 @@ const selectedAudioTrack =
         <AudioPanel experience={experience} />
 
         <AtmospherePanel experience={experience} />
+
+        <ParticlesPanel experience={experience} />
 
         <div class="panel preview-panel">
             <div class="preview-header">
