@@ -13,14 +13,80 @@ import type {
 export class VisualSystem
     implements ExperienceRuntimeSystem {
     public readonly id = 'visuals';
-    public readonly version = '0.15.0';
+    public readonly version = '0.16.0';
     public readonly priority = 30;
     public enabled = true;
 
     private readonly effects =
         new Map<string, VisualEffect>();
 
+    private readonly initialisedEffects =
+        new WeakSet<VisualEffect>();
+
+    private readonly startedEffects =
+        new WeakSet<VisualEffect>();
+
+    private initialised = false;
     private started = false;
+
+    private initialiseEffect(
+        effect: VisualEffect
+    ): void {
+        if (this.initialisedEffects.has(effect)) {
+            return;
+        }
+
+        if (typeof effect.initialise === 'function') {
+            effect.initialise();
+        }
+
+        this.initialisedEffects.add(effect);
+    }
+
+    private startEffect(
+        effect: VisualEffect
+    ): void {
+        if (this.startedEffects.has(effect)) {
+            return;
+        }
+
+        this.initialiseEffect(effect);
+
+        if (typeof effect.start === 'function') {
+            effect.start();
+        }
+
+        this.startedEffects.add(effect);
+    }
+
+    private stopEffect(
+        effect: VisualEffect
+    ): void {
+        if (!this.startedEffects.has(effect)) {
+            return;
+        }
+
+        if (typeof effect.stop === 'function') {
+            effect.stop();
+        }
+
+        this.startedEffects.delete(effect);
+    }
+
+    private destroyEffect(
+        effect: VisualEffect
+    ): void {
+        this.stopEffect(effect);
+
+        if (
+            this.initialisedEffects.has(effect) &&
+            typeof effect.destroy === 'function'
+        ) {
+            effect.destroy();
+        }
+
+        this.initialisedEffects.delete(effect);
+    }
 
     public register(
         effect: VisualEffect
@@ -47,6 +113,14 @@ export class VisualSystem
             effect
         );
 
+        if (effect.enabled && this.initialised) {
+            this.initialiseEffect(effect);
+        }
+
+        if (effect.enabled && this.started) {
+            this.startEffect(effect);
+        }
+
         return () => {
             this.unregister(effect.id);
         };
@@ -55,6 +129,15 @@ export class VisualSystem
     public unregister(
         effectId: string
     ): boolean {
+        const effect =
+            this.effects.get(effectId);
+
+        if (!effect) {
+            return false;
+        }
+
+        this.destroyEffect(effect);
+
         return this.effects.delete(effectId);
     }
 
@@ -70,9 +153,62 @@ export class VisualSystem
         return this.effects.has(effectId);
     }
 
+    public enable(
+        effectId: string
+    ): boolean {
+        const effect =
+            this.effects.get(effectId);
+
+        if (!effect) {
+            return false;
+        }
+
+        if (effect.enabled) {
+            return true;
+        }
+
+        effect.enabled = true;
+
+        if (this.initialised) {
+            this.initialiseEffect(effect);
+        }
+
+        if (this.started) {
+            this.startEffect(effect);
+        }
+
+        return true;
+    }
+
+    public disable(
+        effectId: string
+    ): boolean {
+        const effect =
+            this.effects.get(effectId);
+
+        if (!effect) {
+            return false;
+        }
+
+        if (!effect.enabled) {
+            return true;
+        }
+
+        this.stopEffect(effect);
+        effect.enabled = false;
+
+        return true;
+    }
+
     public list(): VisualEffect[] {
         return Array.from(
             this.effects.values()
+        );
+    }
+
+    public listEnabled(): VisualEffect[] {
+        return this.list().filter(
+            (effect) => effect.enabled
         );
     }
 
@@ -80,28 +216,28 @@ export class VisualSystem
         return this.effects.size;
     }
 
+    public countEnabled(): number {
+        return this.listEnabled().length;
+    }
+
     public initialise(): void {
+        this.initialised = true;
         this.started = false;
 
         this.effects.forEach((effect) => {
-            if (
-                effect.enabled &&
-                typeof effect.initialise === 'function'
-            ) {
-                effect.initialise();
+            if (effect.enabled) {
+                this.initialiseEffect(effect);
             }
         });
     }
 
     public start(): void {
+        this.initialised = true;
         this.started = true;
 
         this.effects.forEach((effect) => {
-            if (
-                effect.enabled &&
-                typeof effect.start === 'function'
-            ) {
-                effect.start();
+            if (effect.enabled) {
+                this.startEffect(effect);
             }
         });
     }
@@ -126,19 +262,16 @@ export class VisualSystem
         this.started = false;
 
         this.effects.forEach((effect) => {
-            if (typeof effect.stop === 'function') {
-                effect.stop();
-            }
+            this.stopEffect(effect);
         });
     }
 
     public destroy(): void {
         this.started = false;
+        this.initialised = false;
 
         this.effects.forEach((effect) => {
-            if (typeof effect.destroy === 'function') {
-                effect.destroy();
-            }
+            this.destroyEffect(effect);
         });
 
         this.effects.clear();

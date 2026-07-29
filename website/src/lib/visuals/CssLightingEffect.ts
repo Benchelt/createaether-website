@@ -3,13 +3,20 @@ import type {
 } from '../ExperienceState';
 
 import type {
-    VisualEffect
+    VisualEffect,
+    VisualEffectCategory
 } from './VisualEffect';
 
 export class CssLightingEffect
     implements VisualEffect {
     public readonly id = 'css-lighting';
-    public readonly version = '0.15.0';
+    public readonly name = 'CSS Lighting';
+    public readonly description =
+        'Controls the Studio preview glow and illuminated orb.';
+    public readonly version = '0.16.0';
+    public readonly category:
+        VisualEffectCategory = 'lighting';
+
     public enabled = true;
 
     private readonly previewStage:

@@ -3,13 +3,20 @@ import type {
 } from '../ExperienceState';
 
 import type {
-    VisualEffect
+    VisualEffect,
+    VisualEffectCategory
 } from './VisualEffect';
 
 export class CssFogEffect
     implements VisualEffect {
     public readonly id = 'css-fog';
-    public readonly version = '0.15.0';
+    public readonly name = 'CSS Fog';
+    public readonly description =
+        'Controls the atmospheric fog layer in the Studio preview.';
+    public readonly version = '0.16.0';
+    public readonly category:
+        VisualEffectCategory = 'fog';
+
     public enabled = true;
 
     private readonly previewStage:
