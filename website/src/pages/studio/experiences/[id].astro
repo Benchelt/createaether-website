@@ -567,6 +567,7 @@ const selectedAudioTrack =
     import { AudioSystem } from '../../../lib/systems/AudioSystem';
     import { ParticleSystem } from '../../../lib/systems/ParticleSystem';
     import { VisualSystem } from '../../../lib/systems/VisualSystem';
+    import { CssLightingEffect } from '../../../lib/visuals/CssLightingEffect';
     import { PreviewController } from '../../../components/studio/PreviewController';
     import { audioTracks } from '../../../data/audio/tracks';
 
@@ -602,7 +603,6 @@ const selectedAudioTrack =
         volumeValue,
         previewStage,
         particlesStatus,
-        lightingStatus,
         fogStatus
     });
 
@@ -631,6 +631,16 @@ const selectedAudioTrack =
 
     const visualSystem =
         new VisualSystem();
+
+    const cssLightingEffect =
+        new CssLightingEffect(
+            previewStage,
+            lightingStatus
+        );
+
+    visualSystem.register(
+        cssLightingEffect
+    );
 
     experienceRuntime.register(
         visualSystem

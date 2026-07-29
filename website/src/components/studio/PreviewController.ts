@@ -10,7 +10,6 @@ export interface PreviewElements {
     volumeValue: Element | null;
     previewStage: Element | null;
     particlesStatus: Element | null;
-    lightingStatus: Element | null;
     fogStatus: Element | null;
 }
 
@@ -59,30 +58,6 @@ export class PreviewController
                     : 'Particles disabled';
         }
     }
-
-    private updateLighting(
-        state: ExperienceStateData
-    ): void {
-        const {
-            previewStage,
-            lightingStatus
-        } = this.elements;
-
-        if (previewStage instanceof HTMLElement) {
-            previewStage.classList.toggle(
-                'preview-stage--lighting-disabled',
-                !state.atmosphere.lighting
-            );
-        }
-
-        if (lightingStatus instanceof HTMLElement) {
-            lightingStatus.textContent =
-                state.atmosphere.lighting
-                    ? 'Lighting active'
-                    : 'Lighting disabled';
-        }
-    }
-
     private updateFog(
         state: ExperienceStateData
     ): void {
@@ -109,7 +84,6 @@ export class PreviewController
     public update(state: ExperienceStateData): void {
         this.updateVolume(state);
         this.updateParticles(state);
-        this.updateLighting(state);
         this.updateFog(state);
     }
 }
