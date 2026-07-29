@@ -61,6 +61,12 @@ const selectedAudioTrack =
 
             <div class="preview-stage" aria-label="Temple atmosphere preview">
                 <div class="preview-glow"></div>
+
+                <canvas
+                    class="preview-canvas"
+                    aria-hidden="true"
+                ></canvas>
+
                 <div class="preview-orb"></div>
 
                 <span class="preview-particle preview-particle--one"></span>
@@ -257,6 +263,14 @@ const selectedAudioTrack =
             #0b1427 58%,
             #111a2e 100%
         );
+}
+
+.preview-canvas{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    pointer-events:none;
 }
 
 .preview-glow{
@@ -568,7 +582,9 @@ const selectedAudioTrack =
     import { VisualSystem } from '../../../lib/systems/VisualSystem';
     import { CssLightingEffect } from '../../../lib/visuals/CssLightingEffect';
     import { CssFogEffect } from '../../../lib/visuals/CssFogEffect';
-import { CssParticleEffect } from '../../../lib/visuals/CssParticleEffect';
+    import { CssParticleEffect } from '../../../lib/visuals/CssParticleEffect';
+    import { CanvasRenderer } from '../../../lib/rendering/CanvasRenderer';
+    import { CanvasParticleEffect } from '../../../lib/visuals/CanvasParticleEffect';
     import { PreviewController } from '../../../components/studio/PreviewController';
     import { audioTracks } from '../../../data/audio/tracks';
 
@@ -583,6 +599,7 @@ import { CssParticleEffect } from '../../../lib/visuals/CssParticleEffect';
     const fogToggle = document.querySelector('#fog-toggle');
 
     const previewStage = document.querySelector('.preview-stage');
+    const previewCanvas = document.querySelector('.preview-canvas');
     const audioElement = document.querySelector('#experience-audio');
 
     const experienceConfiguration =
@@ -656,6 +673,30 @@ import { CssParticleEffect } from '../../../lib/visuals/CssParticleEffect';
 
     experienceRuntime.register(
         visualSystem
+    );
+
+    const canvasRenderer =
+        previewCanvas instanceof HTMLCanvasElement
+            ? new CanvasRenderer(previewCanvas)
+            : null;
+
+    const canvasParticleEffect =
+        canvasRenderer
+            ? new CanvasParticleEffect(canvasRenderer)
+            : null;
+
+    if (canvasParticleEffect) {
+        visualSystem.register(
+            canvasParticleEffect
+        );
+    }
+
+    window.addEventListener(
+        'pagehide',
+        () => canvasRenderer?.destroy(),
+        {
+            once: true
+        }
     );
 
     experienceRuntime.initialise();
