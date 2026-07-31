@@ -61,8 +61,13 @@ const selectedAudioTrack =
                     <h2>Live Preview</h2>
                 </div>
 
-                <span class="preview-status">
-                    <span class="preview-status__dot"></span>
+                <span
+                    id="preview-runtime-status"
+                    class="preview-status">
+                    <span
+                        id="preview-runtime-status-dot"
+                        class="preview-status__dot"
+                    ></span>
                     Ready
                 </span>
             </div>
@@ -238,6 +243,32 @@ const selectedAudioTrack =
     color:#6ee7b7;
     font-size:.75rem;
     font-weight:700;
+}
+
+
+.preview-status__dot--loading{
+    background:#f59e0b;
+    box-shadow:
+        0 0 16px rgba(245,158,11,.9);
+    animation:
+        preview-status-pulse
+        1s ease-in-out infinite;
+}
+
+@keyframes preview-status-pulse{
+
+    0%{
+        transform:scale(1);
+    }
+
+    50%{
+        transform:scale(1.35);
+    }
+
+    100%{
+        transform:scale(1);
+    }
+
 }
 
 .preview-status__dot{
@@ -1296,6 +1327,45 @@ const selectedAudioTrack =
             );
         }
     }
+
+
+    const runtimeStatus =
+        document.querySelector(
+            '#preview-runtime-status'
+        );
+
+    const runtimeStatusDot =
+        document.querySelector(
+            '#preview-runtime-status-dot'
+        );
+
+    experienceRuntime.events.on(
+        'experience:loading',
+        ({ experience }) => {
+
+            if (
+                runtimeStatus instanceof HTMLElement
+            ) {
+                runtimeStatus.innerHTML =
+                    '<span id="preview-runtime-status-dot" class="preview-status__dot preview-status__dot--loading"></span> Switching to '
+                    + experience.name
+                    + '...';
+            }
+        }
+    );
+
+    experienceRuntime.events.on(
+        'experience:loaded',
+        () => {
+
+            if (
+                runtimeStatus instanceof HTMLElement
+            ) {
+                runtimeStatus.innerHTML =
+                    '<span id="preview-runtime-status-dot" class="preview-status__dot"></span> Ready';
+            }
+        }
+    );
 
     let runtimeDestroyed = false;
 
