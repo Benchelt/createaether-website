@@ -83,6 +83,7 @@ const features = [
     ],
   },
 ];
+import SiteFooter from '../components/SiteFooter.astro';
 ---
 
 <!doctype html>
@@ -234,9 +235,7 @@ Aether.Events.on('experience:loaded', (experience) => {
       </section>
     </main>
 
-    <footer>
-      <p>© {new Date().getFullYear()} Aether Experience Platform</p>
-    </footer>
+    <SiteFooter />
   </body>
 </html>
 

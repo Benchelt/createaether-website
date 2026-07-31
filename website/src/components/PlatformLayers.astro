@@ -29,6 +29,7 @@ const layers = [
 
 <section
   class="platform-layers"
+  data-runtime-state="booting"
   aria-label="Aether experience platform layers"
 >
   <div class="platform-aura" aria-hidden="true"></div>
@@ -38,7 +39,7 @@ const layers = [
 
     <span class="runtime-eyebrow">Aether</span>
     <strong>Runtime Core</strong>
-    <small>Experience orchestration</small>
+    <small data-runtime-message>Initialising systems</small>
   </div>
 
   <div class="energy-spine" aria-hidden="true">
@@ -52,6 +53,7 @@ const layers = [
           class={`platform-layer platform-layer--${layer.id}`}
           type="button"
           data-platform-layer={layer.id}
+          data-runtime-status="standby"
           style={`--layer-index: ${index};`}
           aria-label={`${layer.title}: ${layer.description}`}
         >
@@ -67,7 +69,7 @@ const layers = [
 
             <span class="layer-state">
               <i aria-hidden="true"></i>
-              Active
+              <span data-layer-state>Standby</span>
             </span>
           </span>
         </button>
@@ -75,34 +77,137 @@ const layers = [
     }
   </div>
 
-  <p class="platform-caption">
-    Hover over a layer to explore the Aether system.
+  <p class="platform-caption" data-runtime-caption aria-live="polite">
+    Runtime initialising...
   </p>
 </section>
 
 <script>
-  const platform = document.querySelector<HTMLElement>('.platform-layers');
-
-  if (platform) {
+  const initialisePlatform = (platform: HTMLElement) => {
     const layers =
       platform.querySelectorAll<HTMLButtonElement>('[data-platform-layer]');
+
+    const runtimeMessage =
+      platform.querySelector<HTMLElement>('[data-runtime-message]');
+
+    const runtimeCaption =
+      platform.querySelector<HTMLElement>('[data-runtime-caption]');
+
+    const reducedMotion =
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     const clearActiveLayer = () => {
       delete platform.dataset.activeLayer;
     };
 
+    const setRuntimeState = (
+      state: string,
+      message: string,
+      caption: string,
+    ) => {
+      platform.dataset.runtimeState = state;
+
+      if (runtimeMessage) {
+        runtimeMessage.textContent = message;
+      }
+
+      if (runtimeCaption) {
+        runtimeCaption.textContent = caption;
+      }
+    };
+
+    const setLayerState = (
+      layer: HTMLButtonElement,
+      state: string,
+      label: string,
+    ) => {
+      layer.dataset.runtimeStatus = state;
+
+      const stateLabel =
+        layer.querySelector<HTMLElement>('[data-layer-state]');
+
+      if (stateLabel) {
+        stateLabel.textContent = label;
+      }
+    };
+
+    const activateLayer = (layer: HTMLButtonElement) => {
+      setLayerState(layer, 'activating', 'Loading');
+
+      window.setTimeout(() => {
+        setLayerState(layer, 'active', 'Active');
+      }, reducedMotion ? 0 : 260);
+    };
+
     layers.forEach((layer) => {
-      const activateLayer = () => {
+      const showLayer = () => {
         platform.dataset.activeLayer =
           layer.dataset.platformLayer ?? '';
       };
 
-      layer.addEventListener('mouseenter', activateLayer);
-      layer.addEventListener('focus', activateLayer);
+      layer.addEventListener('mouseenter', showLayer);
+      layer.addEventListener('focus', showLayer);
       layer.addEventListener('mouseleave', clearActiveLayer);
       layer.addEventListener('blur', clearActiveLayer);
     });
-  }
+
+    if (reducedMotion) {
+      layers.forEach((layer) => {
+        setLayerState(layer, 'active', 'Active');
+      });
+
+      setRuntimeState(
+        'ready',
+        'Experience orchestration',
+        'Runtime ready · Hover over a layer to explore',
+      );
+
+      return;
+    }
+
+    setRuntimeState(
+      'booting',
+      'Initialising systems',
+      'Runtime initialising...',
+    );
+
+    window.setTimeout(() => {
+      setRuntimeState(
+        'online',
+        'Registering modules',
+        'Runtime core online',
+      );
+    }, 300);
+
+    const activationTimes = [650, 1050, 1450, 1850];
+
+    layers.forEach((layer, index) => {
+      window.setTimeout(() => {
+        const layerName =
+          layer.dataset.platformLayer ?? 'module';
+
+        setRuntimeState(
+          'online',
+          `Registering ${layerName}`,
+          `Activating ${layerName} layer`,
+        );
+
+        activateLayer(layer);
+      }, activationTimes[index]);
+    });
+
+    window.setTimeout(() => {
+      setRuntimeState(
+        'ready',
+        'Experience orchestration',
+        'Runtime ready · Hover over a layer to explore',
+      );
+    }, 2450);
+  };
+
+  document
+    .querySelectorAll<HTMLElement>('.platform-layers')
+    .forEach(initialisePlatform);
 </script>
 
 <style>
@@ -405,6 +510,97 @@ const layers = [
     text-transform: uppercase;
   }
 
+  .platform-layers[data-runtime-state='booting'] .runtime-core {
+    opacity: 0.72;
+    filter: saturate(0.7);
+    animation-duration: 2.2s;
+  }
+
+  .platform-layers[data-runtime-state='online'] .runtime-core {
+    opacity: 1;
+    filter: saturate(1);
+    box-shadow:
+      0 0 0 10px rgba(71, 111, 255, 0.045),
+      0 0 58px rgba(68, 111, 255, 0.48),
+      inset 0 0 42px rgba(125, 207, 255, 0.18);
+  }
+
+  .platform-layers[data-runtime-state='ready'] .runtime-core {
+    box-shadow:
+      0 0 0 10px rgba(71, 111, 255, 0.05),
+      0 0 68px rgba(68, 111, 255, 0.54),
+      inset 0 0 46px rgba(125, 207, 255, 0.22);
+  }
+
+  .platform-layers[data-runtime-state='booting'] .runtime-status {
+    background: rgba(155, 186, 216, 0.7);
+    box-shadow: 0 0 8px rgba(155, 186, 216, 0.45);
+  }
+
+  .platform-layers[data-runtime-state='online'] .runtime-status {
+    background: #ffd37a;
+    box-shadow: 0 0 14px rgba(255, 211, 122, 0.85);
+  }
+
+  .platform-layers[data-runtime-state='ready'] .runtime-status {
+    background: #79e1ff;
+    box-shadow: 0 0 16px rgba(121, 225, 255, 0.95);
+  }
+
+  .platform-layer[data-runtime-status='standby'] {
+    opacity: 0.46;
+    filter: saturate(0.45) brightness(0.78);
+  }
+
+  .platform-layer[data-runtime-status='activating'] {
+    z-index: 11;
+    opacity: 1;
+    filter: saturate(1.15) brightness(1.18);
+    transform:
+      translateX(calc(var(--layer-shift) + 8px))
+      translateY(-3px);
+  }
+
+  .platform-layer[data-runtime-status='activating'] .layer-surface {
+    border-color: rgba(255, 211, 122, 0.48);
+    box-shadow:
+      0 18px 42px rgba(0, 0, 0, 0.4),
+      0 0 34px rgba(255, 211, 122, 0.18),
+      inset 0 1px rgba(255, 255, 255, 0.06);
+  }
+
+  .platform-layer[data-runtime-status='activating']
+    .layer-state i {
+    background: #ffd37a;
+    box-shadow: 0 0 12px rgba(255, 211, 122, 0.9);
+  }
+
+  .platform-layer[data-runtime-status='active'] {
+    opacity: 1;
+    filter: none;
+  }
+
+  .platform-layer[data-runtime-status='active'] .layer-state {
+    color: rgba(201, 226, 242, 0.72);
+  }
+
+  .platform-layer[data-runtime-status='active'] .layer-state i {
+    animation: layer-status-pulse 2.8s ease-in-out infinite;
+  }
+
+  @keyframes layer-status-pulse {
+    0%,
+    100% {
+      opacity: 0.72;
+      transform: scale(0.9);
+    }
+
+    50% {
+      opacity: 1;
+      transform: scale(1.25);
+    }
+  }
+
   @keyframes runtime-breathe {
     0%,
     100% {
@@ -452,7 +648,8 @@ const layers = [
 
   @media (prefers-reduced-motion: reduce) {
     .runtime-core,
-    .energy-spine span {
+    .energy-spine span,
+    .platform-layer[data-runtime-status='active'] .layer-state i {
       animation: none;
     }
 
