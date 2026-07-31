@@ -2,6 +2,7 @@
 import ExperiencePanel from '../components/ExperiencePanel.astro';
 import CapabilityCard from '../components/CapabilityCard.astro';
 import ArchitectureFlow from '../components/ArchitectureFlow.astro';
+import PlatformLayers from '../components/PlatformLayers.astro';
 
 const capabilities = [
   {
@@ -145,11 +146,7 @@ import '../styles/components.css';
 
             <div class="energy-line"></div>
 
-            <img
-              src="/brand/aether-platform-layers.png"
-              alt="Aether platform layers representing audio, particles, lighting and settings"
-              class="hero-platform-artwork"
-            />
+            <PlatformLayers />
           </div>
 
           <ExperiencePanel />
