@@ -251,6 +251,15 @@ const selectedAudioTrack =
     --aether-lighting-shadow-strength:42%;
     --aether-lighting-pulse-duration:4s;
 
+    --aether-fog-colour:#94a3b8;
+    --aether-fog-opacity:.35;
+    --aether-fog-secondary-opacity:.2;
+    --aether-fog-blur:20px;
+    --aether-fog-duration:14s;
+
+    --aether-transition-duration:1000ms;
+    --aether-transition-easing:ease;
+
     position:relative;
     min-height:240px;
     overflow:hidden;
@@ -360,28 +369,46 @@ const selectedAudioTrack =
 }
 
 .preview-stage--fog-disabled .preview-fog{
-    display:none;
+    opacity:0;
 }
 
 .preview-fog{
     position:absolute;
     left:-15%;
     width:130%;
-    height:70px;
+    height:82px;
     border-radius:50%;
-    background:rgba(148,163,184,.07);
-    filter:blur(22px);
+    background:var(--aether-fog-colour);
+    filter:blur(var(--aether-fog-blur));
+    opacity:var(--aether-fog-opacity);
+    pointer-events:none;
+    transition:
+        opacity
+        var(--aether-transition-duration)
+        var(--aether-transition-easing),
+        background-color
+        var(--aether-transition-duration)
+        var(--aether-transition-easing);
 }
 
 .preview-fog--one{
     bottom:15px;
-    animation:fog-drift 9s ease-in-out infinite;
+    animation:
+        fog-drift
+        var(--aether-fog-duration)
+        ease-in-out
+        infinite;
 }
 
 .preview-fog--two{
     bottom:48px;
-    opacity:.55;
-    animation:fog-drift 12s ease-in-out infinite reverse;
+    opacity:var(--aether-fog-secondary-opacity);
+    animation:
+        fog-drift
+        calc(var(--aether-fog-duration) * 1.3)
+        ease-in-out
+        infinite
+        reverse;
 }
 
 .preview-stage__label{
