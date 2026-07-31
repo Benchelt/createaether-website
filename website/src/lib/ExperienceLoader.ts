@@ -71,8 +71,20 @@ export class ExperienceLoader {
                 ...experience.atmosphere
             },
 
+            lighting: {
+                ...experience.lighting
+            },
+
+            fog: {
+                ...experience.fog
+            },
+
             particles: {
                 ...experience.particles
+            },
+
+            transition: {
+                ...experience.transition
             }
         };
     }

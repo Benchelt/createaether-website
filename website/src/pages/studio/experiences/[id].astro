@@ -244,6 +244,13 @@ const selectedAudioTrack =
 }
 
 .preview-stage{
+    --aether-lighting-colour:#3b82f6;
+    --aether-lighting-intensity:1;
+    --aether-lighting-glow-strength:18%;
+    --aether-lighting-orb-strength:55%;
+    --aether-lighting-shadow-strength:42%;
+    --aether-lighting-pulse-duration:4s;
+
     position:relative;
     min-height:240px;
     overflow:hidden;
@@ -278,10 +285,19 @@ const selectedAudioTrack =
     width:180px;
     height:180px;
     border-radius:50%;
-    background:rgba(59,130,246,.12);
+    background:color-mix(
+        in srgb,
+        var(--aether-lighting-colour)
+        var(--aether-lighting-glow-strength),
+        transparent
+    );
     filter:blur(28px);
     transform:translate(-50%,-50%);
-    animation:preview-pulse 4s ease-in-out infinite;
+    animation:
+        preview-pulse
+        var(--aether-lighting-pulse-duration)
+        ease-in-out
+        infinite;
 }
 
 .preview-orb{
@@ -290,21 +306,47 @@ const selectedAudioTrack =
     top:45%;
     width:74px;
     height:74px;
-    border:1px solid rgba(147,197,253,.55);
+    border:1px solid color-mix(
+        in srgb,
+        var(--aether-lighting-colour) 65%,
+        white
+    );
     border-radius:50%;
     background:
         radial-gradient(
             circle at 38% 32%,
-            rgba(255,255,255,.92),
-            rgba(96,165,250,.55) 16%,
-            rgba(37,99,235,.2) 48%,
-            rgba(15,23,42,.1) 72%
+            rgba(255,255,255,.94),
+            color-mix(
+                in srgb,
+                var(--aether-lighting-colour)
+                var(--aether-lighting-orb-strength),
+                white
+            ) 18%,
+            color-mix(
+                in srgb,
+                var(--aether-lighting-colour) 30%,
+                transparent
+            ) 50%,
+            rgba(15,23,42,.1) 74%
         );
     box-shadow:
-        0 0 24px rgba(59,130,246,.55),
-        0 0 70px rgba(37,99,235,.28);
+        0 0 24px color-mix(
+            in srgb,
+            var(--aether-lighting-colour)
+            var(--aether-lighting-shadow-strength),
+            transparent
+        ),
+        0 0 70px color-mix(
+            in srgb,
+            var(--aether-lighting-colour) 24%,
+            transparent
+        );
     transform:translate(-50%,-50%);
     animation:preview-float 5s ease-in-out infinite;
+}
+
+.preview-stage--lighting-static .preview-glow{
+    animation:none;
 }
 
 .preview-stage--lighting-disabled .preview-glow{
@@ -875,14 +917,29 @@ const selectedAudioTrack =
 
             editableExperience = {
                 ...initialExperience,
+
                 audio: {
                     ...initialExperience.audio
                 },
+
                 atmosphere: {
                     ...initialExperience.atmosphere
                 },
+
+                lighting: {
+                    ...initialExperience.lighting
+                },
+
+                fog: {
+                    ...initialExperience.fog
+                },
+
                 particles: {
                     ...initialExperience.particles
+                },
+
+                transition: {
+                    ...initialExperience.transition
                 }
             };
 
