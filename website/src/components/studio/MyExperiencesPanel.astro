@@ -300,6 +300,17 @@
                 }
             );
 
+            const metadata =
+                document.createElement('div');
+
+            metadata.className =
+                'my-experiences__metadata';
+
+            metadata.append(
+                status,
+                details
+            );
+
             actions.append(
                 renameButton,
                 duplicateButton,
@@ -307,8 +318,7 @@
             );
 
             footer.append(
-                status,
-                details,
+                metadata,
                 actions
             );
 
@@ -414,12 +424,21 @@
 
     .my-experiences__card-footer {
         display: flex;
-        align-items: center;
-        justify-content: space-between;
+        flex-direction: column;
+        align-items: stretch;
         gap: 1rem;
     }
 
-    .my-experiences__card-footer span {
+    .my-experiences__metadata {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        min-width: 0;
+    }
+
+    .my-experiences__metadata span {
+        flex: 0 0 auto;
         color: #38bdf8;
         font-size: 0.72rem;
         font-weight: 700;
@@ -427,19 +446,23 @@
         text-transform: uppercase;
     }
 
-    .my-experiences__card-footer small {
+    .my-experiences__metadata small {
+        min-width: 0;
         color: #64748b;
         text-align: right;
+        line-height: 1.4;
     }
 
     .my-experiences__actions {
         display: flex;
         align-items: center;
+        flex-wrap: wrap;
         gap: 0.55rem;
     }
 
     .my-experiences__action,
     .my-experiences__continue {
+        margin-left: auto;
         display: inline-flex;
         align-items: center;
         justify-content: center;
@@ -529,8 +552,22 @@
             flex-direction: column;
         }
 
+        .my-experiences__metadata {
+            align-items: flex-start;
+            flex-direction: column;
+            gap: 0.45rem;
+        }
+
+        .my-experiences__metadata small {
+            text-align: left;
+        }
+
         .my-experiences__actions {
-            flex-wrap: wrap;
+            width: 100%;
+        }
+
+        .my-experiences__continue {
+            margin-left: 0;
         }
 
         .my-experiences__card-footer small {
