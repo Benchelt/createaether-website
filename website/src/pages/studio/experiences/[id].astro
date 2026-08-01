@@ -72,7 +72,12 @@ const selectedAudioTrack =
                 </span>
             </div>
 
-            <div class="preview-stage" aria-label="Temple atmosphere preview">
+            <div
+                id="experience-preview-stage"
+                class="preview-stage"
+                aria-label="Temple atmosphere preview"
+                tabindex="-1"
+            >
                 <div class="preview-glow"></div>
 
                 <canvas
@@ -119,7 +124,12 @@ const selectedAudioTrack =
             </div>
 
             <div class="preview-actions">
-                <button type="button" class="button-secondary">
+                <button
+                    type="button"
+                    id="launch-preview-button"
+                    class="button-secondary"
+                    aria-controls="experience-preview-stage"
+                >
                     Launch Preview
                 </button>
 
@@ -769,6 +779,9 @@ const selectedAudioTrack =
     const audioPlaybackStatus =
         document.querySelector('#audio-playback-status');
 
+    const launchPreviewButton =
+        document.querySelector('#launch-preview-button');
+
     const particlesStatus = document.querySelector('#particles-status');
     const lightingStatus = document.querySelector('#lighting-status');
     const fogStatus = document.querySelector('#fog-status');
@@ -1366,6 +1379,57 @@ const selectedAudioTrack =
             }
         }
     );
+
+    if (
+        launchPreviewButton instanceof HTMLButtonElement &&
+        previewStage instanceof HTMLElement
+    ) {
+        launchPreviewButton.addEventListener(
+            'click',
+            () => {
+                if (!editableExperience) {
+                    launchPreviewButton.textContent =
+                        'Preview unavailable';
+
+                    window.setTimeout(
+                        () => {
+                            launchPreviewButton.textContent =
+                                'Launch Preview';
+                        },
+                        1600
+                    );
+
+                    return;
+                }
+
+                launchPreviewButton.disabled = true;
+                launchPreviewButton.textContent =
+                    'Launching...';
+
+                experienceLoader.load(
+                    cloneExperience(editableExperience)
+                );
+
+                previewStage.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center'
+                });
+
+                previewStage.focus({
+                    preventScroll: true
+                });
+
+                window.setTimeout(
+                    () => {
+                        launchPreviewButton.disabled = false;
+                        launchPreviewButton.textContent =
+                            'Relaunch Preview';
+                    },
+                    editableExperience.transition.duration
+                );
+            }
+        );
+    }
 
     let runtimeDestroyed = false;
 
