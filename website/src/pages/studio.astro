@@ -3,6 +3,7 @@ import StudioLayout from '../layouts/StudioLayout.astro';
 import MetricCard from '../components/studio/MetricCard.astro';
 import StatusCard from '../components/studio/StatusCard.astro';
 import ExperienceCard from '../components/studio/ExperienceCard.astro';
+import MyExperiencesPanel from '../components/studio/MyExperiencesPanel.astro';
 import { experiences } from '../data/experiences';
 ---
 
@@ -111,6 +112,8 @@ import { experiences } from '../data/experiences';
           ))
         }
       </div>
+
+      <MyExperiencesPanel />
     </section>
 
     <section class="studio-dashboard__workspace">

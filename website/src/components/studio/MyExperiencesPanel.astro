@@ -1,0 +1,313 @@
+<section
+    class="my-experiences"
+    data-my-experiences
+    aria-labelledby="my-experiences-title"
+>
+    <div class="my-experiences__heading">
+        <div>
+            <p>Personal library</p>
+            <h3 id="my-experiences-title">
+                My Experiences
+            </h3>
+        </div>
+
+        <span data-my-experiences-count>
+            Loading…
+        </span>
+    </div>
+
+    <div
+        class="my-experiences__grid"
+        data-my-experiences-grid
+        aria-live="polite"
+    >
+        <div class="my-experiences__empty">
+            Loading your saved experiences…
+        </div>
+    </div>
+</section>
+
+<script>
+    import {
+        ExperienceLibrary
+    } from '../../lib/storage/ExperienceLibrary';
+
+    const panel =
+        document.querySelector<HTMLElement>(
+            '[data-my-experiences]'
+        );
+
+    const grid =
+        panel?.querySelector<HTMLElement>(
+            '[data-my-experiences-grid]'
+        );
+
+    const count =
+        panel?.querySelector<HTMLElement>(
+            '[data-my-experiences-count]'
+        );
+
+    const renderEmptyState = (): void => {
+        if (!grid) {
+            return;
+        }
+
+        grid.replaceChildren();
+
+        const emptyState =
+            document.createElement('div');
+
+        emptyState.className =
+            'my-experiences__empty';
+
+        const title =
+            document.createElement('strong');
+
+        title.textContent =
+            'No saved experiences yet';
+
+        const description =
+            document.createElement('p');
+
+        description.textContent =
+            'Open an experience, make your changes and press Save to add it to this library.';
+
+        emptyState.append(
+            title,
+            description
+        );
+
+        grid.appendChild(emptyState);
+
+        if (count) {
+            count.textContent = '0 saved';
+        }
+    };
+
+    const renderLibrary = (): void => {
+        if (!grid) {
+            return;
+        }
+
+        const library =
+            new ExperienceLibrary();
+
+        const experiences =
+            library.list();
+
+        if (experiences.length === 0) {
+            renderEmptyState();
+            return;
+        }
+
+        grid.replaceChildren();
+
+        experiences.forEach((experience) => {
+            const card =
+                document.createElement('article');
+
+            card.className =
+                'my-experiences__card';
+
+            const content =
+                document.createElement('div');
+
+            const title =
+                document.createElement('h4');
+
+            title.textContent =
+                experience.name;
+
+            const description =
+                document.createElement('p');
+
+            description.textContent =
+                experience.description;
+
+            content.append(
+                title,
+                description
+            );
+
+            const footer =
+                document.createElement('div');
+
+            footer.className =
+                'my-experiences__card-footer';
+
+            const status =
+                document.createElement('span');
+
+            status.textContent =
+                'Saved locally';
+
+            const details =
+                document.createElement('small');
+
+            details.textContent =
+                `${experience.particles.count} particles · ${experience.audio.enabled ? 'Audio enabled' : 'Audio disabled'}`;
+
+            footer.append(
+                status,
+                details
+            );
+
+            card.append(
+                content,
+                footer
+            );
+
+            grid.appendChild(card);
+        });
+
+        if (count) {
+            count.textContent =
+                `${experiences.length} saved`;
+        }
+    };
+
+    renderLibrary();
+
+    document.addEventListener(
+        'astro:page-load',
+        renderLibrary
+    );
+</script>
+
+<style is:global>
+    .my-experiences {
+        margin-top: 1.75rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid rgba(148, 163, 184, 0.14);
+    }
+
+    .my-experiences__heading {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-bottom: 1.25rem;
+    }
+
+    .my-experiences__heading p {
+        margin: 0 0 0.45rem;
+        color: #38bdf8;
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+    }
+
+    .my-experiences__heading h3 {
+        margin: 0;
+        color: #e2e8f0;
+        font-size: 1.15rem;
+    }
+
+    .my-experiences__heading > span {
+        color: #64748b;
+        font-size: 0.78rem;
+    }
+
+    .my-experiences__grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 1rem;
+    }
+
+    .my-experiences__card {
+        display: flex;
+        min-width: 0;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 1.5rem;
+        padding: 1.4rem;
+        border: 1px solid rgba(125, 211, 252, 0.14);
+        border-radius: 1rem;
+        background:
+            linear-gradient(
+                145deg,
+                rgba(16, 24, 44, 0.96),
+                rgba(10, 17, 32, 0.94)
+            );
+        transition:
+            transform 0.2s ease,
+            border-color 0.2s ease;
+    }
+
+    .my-experiences__card:hover {
+        transform: translateY(-3px);
+        border-color: rgba(56, 189, 248, 0.55);
+    }
+
+    .my-experiences__card h4 {
+        margin: 0;
+        color: #f8fafc;
+        font-size: 1.05rem;
+    }
+
+    .my-experiences__card p {
+        margin: 0.7rem 0 0;
+        color: #94a3b8;
+        line-height: 1.6;
+    }
+
+    .my-experiences__card-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+    }
+
+    .my-experiences__card-footer span {
+        color: #38bdf8;
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+
+    .my-experiences__card-footer small {
+        color: #64748b;
+        text-align: right;
+    }
+
+    .my-experiences__empty {
+        grid-column: 1 / -1;
+        padding: 1.5rem;
+        border: 1px dashed rgba(148, 163, 184, 0.2);
+        border-radius: 1rem;
+        background: rgba(15, 23, 42, 0.42);
+        color: #94a3b8;
+    }
+
+    .my-experiences__empty strong {
+        display: block;
+        margin-bottom: 0.45rem;
+        color: #e2e8f0;
+    }
+
+    .my-experiences__empty p {
+        max-width: 42rem;
+        margin: 0;
+        line-height: 1.6;
+    }
+
+    @media (max-width: 1100px) {
+        .my-experiences__grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 720px) {
+        .my-experiences__heading,
+        .my-experiences__card-footer {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .my-experiences__card-footer small {
+            text-align: left;
+        }
+    }
+</style>

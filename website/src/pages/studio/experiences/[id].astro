@@ -656,6 +656,7 @@ const selectedAudioTrack =
     import { ExperienceState } from '../../../lib/ExperienceState';
     import { ExperienceRuntime } from '../../../lib/ExperienceRuntime';
     import { ExperienceLoader } from '../../../lib/ExperienceLoader';
+    import { ExperienceLibrary } from '../../../lib/storage/ExperienceLibrary';
     import type {
         Experience,
         ParticleSettings
@@ -818,6 +819,7 @@ const selectedAudioTrack =
     });
 
     const experienceRuntime = new ExperienceRuntime();
+    const experienceLibrary = new ExperienceLibrary();
 
     const audioSystem = new AudioSystem(
         audioElement,
@@ -1407,6 +1409,48 @@ const selectedAudioTrack =
         }
     );
 
+    const downloadExperience = (
+        experience: Experience
+    ): void => {
+        const filenameBase =
+            experience.name
+                .trim()
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/^-+|-+$/g, '')
+            || experience.id
+            || 'aether-experience';
+
+        const payload = JSON.stringify(
+            experience,
+            null,
+            2
+        );
+
+        const blob = new Blob(
+            [payload],
+            {
+                type: 'application/json'
+            }
+        );
+
+        const downloadUrl =
+            URL.createObjectURL(blob);
+
+        const downloadLink =
+            document.createElement('a');
+
+        downloadLink.href = downloadUrl;
+        downloadLink.download =
+            `${filenameBase}.aether.json`;
+
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        downloadLink.remove();
+
+        URL.revokeObjectURL(downloadUrl);
+    };
+
     if (
         launchPreviewButton instanceof HTMLButtonElement &&
         previewStage instanceof HTMLElement
@@ -1479,49 +1523,46 @@ const selectedAudioTrack =
                     return;
                 }
 
-                const filenameBase =
-                    editableExperience.name
-                        .trim()
-                        .toLowerCase()
-                        .replace(/[^a-z0-9]+/g, '-')
-                        .replace(/^-+|-+$/g, '')
-                    || editableExperience.id
-                    || 'aether-experience';
+                saveExperienceButton.disabled = true;
+                saveExperienceButton.textContent =
+                    'Saving...';
 
-                const payload = JSON.stringify(
-                    editableExperience,
-                    null,
-                    2
+                const experienceToSave =
+                    cloneExperience(
+                        editableExperience
+                    );
+
+                const savedToLibrary =
+                    experienceLibrary.save(
+                        experienceToSave
+                    );
+
+                if (!savedToLibrary) {
+                    saveExperienceButton.textContent =
+                        'Save failed';
+
+                    window.setTimeout(
+                        () => {
+                            saveExperienceButton.disabled = false;
+                            saveExperienceButton.textContent =
+                                'Save';
+                        },
+                        2200
+                    );
+
+                    return;
+                }
+
+                downloadExperience(
+                    experienceToSave
                 );
-
-                const blob = new Blob(
-                    [payload],
-                    {
-                        type: 'application/json'
-                    }
-                );
-
-                const downloadUrl =
-                    URL.createObjectURL(blob);
-
-                const downloadLink =
-                    document.createElement('a');
-
-                downloadLink.href = downloadUrl;
-                downloadLink.download =
-                    `${filenameBase}.aether.json`;
-
-                document.body.appendChild(downloadLink);
-                downloadLink.click();
-                downloadLink.remove();
-
-                URL.revokeObjectURL(downloadUrl);
 
                 saveExperienceButton.textContent =
                     'Saved';
 
                 window.setTimeout(
                     () => {
+                        saveExperienceButton.disabled = false;
                         saveExperienceButton.textContent =
                             'Save';
                     },
