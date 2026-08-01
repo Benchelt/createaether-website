@@ -208,6 +208,61 @@ export class ExperienceLibrary {
         return writeLibrary(library);
     }
 
+    public duplicate(
+        id: string
+    ): Experience | null {
+        const library =
+            readLibrary();
+
+        const source =
+            library.find(
+                (item) => item.id === id
+            );
+
+        if (!source) {
+            return null;
+        }
+
+        const copy =
+            cloneExperience(source);
+
+        copy.id =
+            `${source.id}-${Date.now()}`;
+
+        const baseName =
+            source.name
+                .replace(/ Copy(?: \d+)?$/, '');
+
+        const existingNames =
+            new Set(
+                library.map(
+                    (item) => item.name
+                )
+            );
+
+        let copyNumber = 1;
+        let copyName =
+            `${baseName} Copy`;
+
+        while (
+            existingNames.has(copyName)
+        ) {
+            copyNumber += 1;
+            copyName =
+                `${baseName} Copy ${copyNumber}`;
+        }
+
+        copy.name = copyName;
+
+        library.push(copy);
+
+        if (!writeLibrary(library)) {
+            return null;
+        }
+
+        return cloneExperience(copy);
+    }
+
     public stageForEditing(
         experience: Experience
     ): boolean {

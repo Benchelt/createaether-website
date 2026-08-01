@@ -201,6 +201,48 @@
                 }
             );
 
+            const duplicateButton =
+                document.createElement('button');
+
+            duplicateButton.type = 'button';
+            duplicateButton.className =
+                'my-experiences__action';
+
+            duplicateButton.textContent =
+                'Duplicate';
+
+            duplicateButton.addEventListener(
+                'click',
+                () => {
+                    duplicateButton.disabled = true;
+                    duplicateButton.textContent =
+                        'Duplicating...';
+
+                    const duplicated =
+                        library.duplicate(
+                            experience.id
+                        );
+
+                    if (!duplicated) {
+                        duplicateButton.disabled = false;
+                        duplicateButton.textContent =
+                            'Duplicate failed';
+
+                        window.setTimeout(
+                            () => {
+                                duplicateButton.textContent =
+                                    'Duplicate';
+                            },
+                            1800
+                        );
+
+                        return;
+                    }
+
+                    renderLibrary();
+                }
+            );
+
             const continueLink =
                 document.createElement('a');
 
@@ -260,6 +302,7 @@
 
             actions.append(
                 renameButton,
+                duplicateButton,
                 continueLink
             );
 
@@ -423,6 +466,11 @@
     .my-experiences__action:hover {
         transform: translateY(-1px);
         background: #475569;
+    }
+
+    .my-experiences__action:disabled {
+        cursor: wait;
+        opacity: 0.65;
     }
 
     .my-experiences__continue {
