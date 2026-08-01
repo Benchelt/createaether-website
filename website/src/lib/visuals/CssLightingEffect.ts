@@ -6,6 +6,10 @@ import {
     TransitionController
 } from '../runtime/TransitionController';
 
+import {
+    ColourInterpolator
+} from '../runtime/ColourInterpolator';
+
 import type {
     VisualEffect,
     VisualEffectCategory
@@ -35,11 +39,17 @@ export class CssLightingEffect
     private readonly pulseTransition =
         new TransitionController();
 
+    private readonly colourTransition =
+        new TransitionController();
+
     private currentIntensity:
         number | null = null;
 
     private currentPulseDuration:
         number | null = null;
+
+    private currentColour:
+        string | null = null;
 
     constructor(
         previewStage: Element | null,
@@ -85,6 +95,23 @@ export class CssLightingEffect
         this.previewStage.style.setProperty(
             '--aether-lighting-shadow-strength',
             `${12 + clampedIntensity * 38}%`
+        );
+    }
+
+    private applyColour(
+        colour: string
+    ): void {
+        if (
+            !(this.previewStage instanceof HTMLElement)
+        ) {
+            return;
+        }
+
+        this.currentColour = colour;
+
+        this.previewStage.style.setProperty(
+            '--aether-lighting-colour',
+            colour
         );
     }
 
@@ -157,10 +184,39 @@ export class CssLightingEffect
             this.previewStage.dataset.lightingPreset =
                 state.lighting.preset;
 
-            this.previewStage.style.setProperty(
-                '--aether-lighting-colour',
-                state.lighting.colour
-            );
+            const targetColour =
+                state.lighting.colour;
+
+            if (this.currentColour === null) {
+                this.applyColour(
+                    targetColour
+                );
+            } else if (
+                this.currentColour !== targetColour
+            ) {
+                const startColour =
+                    this.currentColour;
+
+                this.colourTransition.animate({
+                    from: 0,
+                    to: 1,
+                    duration: transitionDuration,
+                    onUpdate: (progress) => {
+                        this.applyColour(
+                            ColourInterpolator.interpolate(
+                                startColour,
+                                targetColour,
+                                progress
+                            )
+                        );
+                    },
+                    onComplete: () => {
+                        this.applyColour(
+                            targetColour
+                        );
+                    }
+                });
+            }
 
             if (this.currentIntensity === null) {
                 this.applyIntensity(
@@ -213,8 +269,10 @@ export class CssLightingEffect
     public destroy(): void {
         this.intensityTransition.cancel();
         this.pulseTransition.cancel();
+        this.colourTransition.cancel();
 
         this.currentIntensity = null;
         this.currentPulseDuration = null;
+        this.currentColour = null;
     }
 }
