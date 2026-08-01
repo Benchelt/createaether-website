@@ -243,6 +243,57 @@
                 }
             );
 
+            const deleteButton =
+                document.createElement('button');
+
+            deleteButton.type = 'button';
+            deleteButton.className =
+                'my-experiences__action my-experiences__action--danger';
+
+            deleteButton.textContent =
+                'Delete';
+
+            deleteButton.addEventListener(
+                'click',
+                () => {
+                    const confirmed =
+                        window.confirm(
+                            `Delete "${experience.name}"? This cannot be undone.`
+                        );
+
+                    if (!confirmed) {
+                        return;
+                    }
+
+                    deleteButton.disabled = true;
+                    deleteButton.textContent =
+                        'Deleting...';
+
+                    const removed =
+                        library.remove(
+                            experience.id
+                        );
+
+                    if (!removed) {
+                        deleteButton.disabled = false;
+                        deleteButton.textContent =
+                            'Delete failed';
+
+                        window.setTimeout(
+                            () => {
+                                deleteButton.textContent =
+                                    'Delete';
+                            },
+                            1800
+                        );
+
+                        return;
+                    }
+
+                    renderLibrary();
+                }
+            );
+
             const continueLink =
                 document.createElement('a');
 
@@ -314,6 +365,7 @@
             actions.append(
                 renameButton,
                 duplicateButton,
+                deleteButton,
                 continueLink
             );
 
@@ -489,6 +541,14 @@
     .my-experiences__action:hover {
         transform: translateY(-1px);
         background: #475569;
+    }
+
+    .my-experiences__action--danger {
+        background: rgba(127, 29, 29, 0.9);
+    }
+
+    .my-experiences__action--danger:hover {
+        background: #991b1b;
     }
 
     .my-experiences__action:disabled {
