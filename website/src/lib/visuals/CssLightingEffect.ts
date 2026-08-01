@@ -113,6 +113,11 @@ export class CssLightingEffect
             '--aether-lighting-colour',
             colour
         );
+
+        this.previewStage.style.setProperty(
+            '--aether-stage-ambient',
+            colour
+        );
     }
 
     private applyPulseDuration(

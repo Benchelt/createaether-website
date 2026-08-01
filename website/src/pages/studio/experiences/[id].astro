@@ -309,6 +309,7 @@ const selectedAudioTrack =
 
 .preview-stage{
     --aether-lighting-colour:#3b82f6;
+    --aether-stage-ambient:#3b82f6;
     --aether-lighting-intensity:1;
     --aether-lighting-glow-strength:18%;
     --aether-lighting-orb-strength:55%;
@@ -332,7 +333,11 @@ const selectedAudioTrack =
     background:
         radial-gradient(
             circle at 50% 48%,
-            rgba(59,130,246,.16),
+            color-mix(
+                in srgb,
+                var(--aether-stage-ambient) 16%,
+                transparent
+            ),
             transparent 34%
         ),
         linear-gradient(
@@ -446,13 +451,6 @@ const selectedAudioTrack =
     filter:blur(var(--aether-fog-blur));
     opacity:var(--aether-fog-opacity);
     pointer-events:none;
-    transition:
-        opacity
-        var(--aether-transition-duration)
-        var(--aether-transition-easing),
-        background-color
-        var(--aether-transition-duration)
-        var(--aether-transition-easing);
 }
 
 .preview-fog--one{
