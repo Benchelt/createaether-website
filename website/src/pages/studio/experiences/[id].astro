@@ -140,6 +140,21 @@ const selectedAudioTrack =
                     Save
                 </button>
 
+                <button
+                    type="button"
+                    id="import-experience-button"
+                    class="button-secondary"
+                >
+                    Import
+                </button>
+
+                <input
+                    type="file"
+                    id="import-experience-input"
+                    accept=".aether.json,.json,application/json"
+                    hidden
+                />
+
                 <button type="button">
                     Publish
                 </button>
@@ -787,6 +802,12 @@ const selectedAudioTrack =
 
     const saveExperienceButton =
         document.querySelector('#save-experience-button');
+
+    const importExperienceButton =
+        document.querySelector('#import-experience-button');
+
+    const importExperienceInput =
+        document.querySelector('#import-experience-input');
 
     const particlesStatus = document.querySelector('#particles-status');
     const lightingStatus = document.querySelector('#lighting-status');
@@ -1506,6 +1527,90 @@ const selectedAudioTrack =
                     },
                     1600
                 );
+            }
+        );
+    }
+
+    if (
+        importExperienceButton instanceof HTMLButtonElement &&
+        importExperienceInput instanceof HTMLInputElement
+    ) {
+        importExperienceButton.addEventListener(
+            'click',
+            () => {
+                importExperienceInput.value = '';
+                importExperienceInput.click();
+            }
+        );
+
+        importExperienceInput.addEventListener(
+            'change',
+            async () => {
+                const file =
+                    importExperienceInput.files?.[0];
+
+                if (!file) {
+                    return;
+                }
+
+                importExperienceButton.disabled = true;
+                importExperienceButton.textContent =
+                    'Importing...';
+
+                try {
+                    const fileContents =
+                        await file.text();
+
+                    const importedExperience =
+                        JSON.parse(
+                            fileContents
+                        ) as Experience;
+
+                    const nextExperience =
+                        cloneExperience(
+                            importedExperience
+                        );
+
+                    experienceLoader.load(
+                        nextExperience
+                    );
+
+                    editableExperience =
+                        nextExperience;
+
+                    synchroniseEditor(
+                        editableExperience
+                    );
+
+                    importExperienceButton.textContent =
+                        'Imported';
+
+                    window.setTimeout(
+                        () => {
+                            importExperienceButton.disabled = false;
+                            importExperienceButton.textContent =
+                                'Import';
+                        },
+                        1600
+                    );
+                } catch (error) {
+                    console.error(
+                        'Unable to import the Aether experience.',
+                        error
+                    );
+
+                    importExperienceButton.textContent =
+                        'Import failed';
+
+                    window.setTimeout(
+                        () => {
+                            importExperienceButton.disabled = false;
+                            importExperienceButton.textContent =
+                                'Import';
+                        },
+                        2200
+                    );
+                }
             }
         );
     }
