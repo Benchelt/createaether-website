@@ -147,6 +147,60 @@
             details.textContent =
                 `${experience.particles.count} particles · ${experience.audio.enabled ? 'Audio enabled' : 'Audio disabled'}`;
 
+            const actions =
+                document.createElement('div');
+
+            actions.className =
+                'my-experiences__actions';
+
+            const renameButton =
+                document.createElement('button');
+
+            renameButton.type = 'button';
+            renameButton.className =
+                'my-experiences__action';
+
+            renameButton.textContent =
+                'Rename';
+
+            renameButton.addEventListener(
+                'click',
+                () => {
+                    const nextName =
+                        window.prompt(
+                            'Rename experience',
+                            experience.name
+                        );
+
+                    if (nextName === null) {
+                        return;
+                    }
+
+                    const renamed =
+                        library.rename(
+                            experience.id,
+                            nextName
+                        );
+
+                    if (!renamed) {
+                        renameButton.textContent =
+                            'Rename failed';
+
+                        window.setTimeout(
+                            () => {
+                                renameButton.textContent =
+                                    'Rename';
+                            },
+                            1800
+                        );
+
+                        return;
+                    }
+
+                    renderLibrary();
+                }
+            );
+
             const continueLink =
                 document.createElement('a');
 
@@ -204,10 +258,15 @@
                 }
             );
 
+            actions.append(
+                renameButton,
+                continueLink
+            );
+
             footer.append(
                 status,
                 details,
-                continueLink
+                actions
             );
 
             card.append(
@@ -330,8 +389,43 @@
         text-align: right;
     }
 
+    .my-experiences__actions {
+        display: flex;
+        align-items: center;
+        gap: 0.55rem;
+    }
+
+    .my-experiences__action,
     .my-experiences__continue {
         display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 auto;
+        border: 0;
+        border-radius: 0.65rem;
+        padding: 0.55rem 0.8rem;
+        color: #ffffff;
+        font: inherit;
+        font-size: 0.72rem;
+        font-weight: 700;
+        line-height: 1;
+        text-decoration: none;
+        cursor: pointer;
+        transition:
+            background 0.2s ease,
+            transform 0.2s ease;
+    }
+
+    .my-experiences__action {
+        background: #334155;
+    }
+
+    .my-experiences__action:hover {
+        transform: translateY(-1px);
+        background: #475569;
+    }
+
+    .my-experiences__continue {
         align-items: center;
         justify-content: center;
         flex: 0 0 auto;
@@ -385,6 +479,10 @@
         .my-experiences__card-footer {
             align-items: flex-start;
             flex-direction: column;
+        }
+
+        .my-experiences__actions {
+            flex-wrap: wrap;
         }
 
         .my-experiences__card-footer small {

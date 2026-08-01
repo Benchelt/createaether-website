@@ -180,6 +180,34 @@ export class ExperienceLibrary {
         return writeLibrary(nextLibrary);
     }
 
+    public rename(
+        id: string,
+        name: string
+    ): boolean {
+        const nextName =
+            name.trim();
+
+        if (!nextName) {
+            return false;
+        }
+
+        const library =
+            readLibrary();
+
+        const experience =
+            library.find(
+                (item) => item.id === id
+            );
+
+        if (!experience) {
+            return false;
+        }
+
+        experience.name = nextName;
+
+        return writeLibrary(library);
+    }
+
     public stageForEditing(
         experience: Experience
     ): boolean {
