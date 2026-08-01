@@ -133,7 +133,10 @@ const selectedAudioTrack =
                     Launch Preview
                 </button>
 
-                <button type="button">
+                <button
+                    type="button"
+                    id="save-experience-button"
+                >
                     Save
                 </button>
 
@@ -782,6 +785,9 @@ const selectedAudioTrack =
     const launchPreviewButton =
         document.querySelector('#launch-preview-button');
 
+    const saveExperienceButton =
+        document.querySelector('#save-experience-button');
+
     const particlesStatus = document.querySelector('#particles-status');
     const lightingStatus = document.querySelector('#lighting-status');
     const fogStatus = document.querySelector('#fog-status');
@@ -1426,6 +1432,79 @@ const selectedAudioTrack =
                             'Relaunch Preview';
                     },
                     editableExperience.transition.duration
+                );
+            }
+        );
+    }
+
+    if (
+        saveExperienceButton instanceof HTMLButtonElement
+    ) {
+        saveExperienceButton.addEventListener(
+            'click',
+            () => {
+                if (!editableExperience) {
+                    saveExperienceButton.textContent =
+                        'Nothing to save';
+
+                    window.setTimeout(
+                        () => {
+                            saveExperienceButton.textContent =
+                                'Save';
+                        },
+                        1600
+                    );
+
+                    return;
+                }
+
+                const filenameBase =
+                    editableExperience.name
+                        .trim()
+                        .toLowerCase()
+                        .replace(/[^a-z0-9]+/g, '-')
+                        .replace(/^-+|-+$/g, '')
+                    || editableExperience.id
+                    || 'aether-experience';
+
+                const payload = JSON.stringify(
+                    editableExperience,
+                    null,
+                    2
+                );
+
+                const blob = new Blob(
+                    [payload],
+                    {
+                        type: 'application/json'
+                    }
+                );
+
+                const downloadUrl =
+                    URL.createObjectURL(blob);
+
+                const downloadLink =
+                    document.createElement('a');
+
+                downloadLink.href = downloadUrl;
+                downloadLink.download =
+                    `${filenameBase}.aether.json`;
+
+                document.body.appendChild(downloadLink);
+                downloadLink.click();
+                downloadLink.remove();
+
+                URL.revokeObjectURL(downloadUrl);
+
+                saveExperienceButton.textContent =
+                    'Saved';
+
+                window.setTimeout(
+                    () => {
+                        saveExperienceButton.textContent =
+                            'Save';
+                    },
+                    1600
                 );
             }
         );
