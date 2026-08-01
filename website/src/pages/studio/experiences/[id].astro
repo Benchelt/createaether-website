@@ -1277,9 +1277,13 @@ const selectedAudioTrack =
                         ?? ''
                 ) as Experience;
 
+            const stagedExperience =
+                experienceLibrary.consumeStaged();
+
             editableExperience =
                 cloneExperience(
-                    initialExperience
+                    stagedExperience
+                        ?? initialExperience
                 );
 
             experienceLoader.load(

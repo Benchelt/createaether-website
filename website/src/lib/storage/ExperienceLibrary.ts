@@ -5,6 +5,9 @@ import type {
 const STORAGE_KEY =
     'aether.studio.experiences.v1';
 
+const EDITING_STORAGE_KEY =
+    'aether.studio.editing-experience.v1';
+
 function cloneExperience(
     experience: Experience
 ): Experience {
@@ -175,5 +178,56 @@ export class ExperienceLibrary {
         }
 
         return writeLibrary(nextLibrary);
+    }
+
+    public stageForEditing(
+        experience: Experience
+    ): boolean {
+        if (!isExperience(experience)) {
+            return false;
+        }
+
+        try {
+            sessionStorage.setItem(
+                EDITING_STORAGE_KEY,
+                JSON.stringify(
+                    cloneExperience(experience)
+                )
+            );
+
+            return true;
+        } catch {
+            return false;
+        }
+    }
+
+    public consumeStaged(): Experience | null {
+        try {
+            const stored =
+                sessionStorage.getItem(
+                    EDITING_STORAGE_KEY
+                );
+
+            if (!stored) {
+                return null;
+            }
+
+            sessionStorage.removeItem(
+                EDITING_STORAGE_KEY
+            );
+
+            const parsed: unknown =
+                JSON.parse(stored);
+
+            return isExperience(parsed)
+                ? cloneExperience(parsed)
+                : null;
+        } catch {
+            sessionStorage.removeItem(
+                EDITING_STORAGE_KEY
+            );
+
+            return null;
+        }
     }
 }

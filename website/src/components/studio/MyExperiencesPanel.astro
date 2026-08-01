@@ -147,9 +147,67 @@
             details.textContent =
                 `${experience.particles.count} particles · ${experience.audio.enabled ? 'Audio enabled' : 'Audio disabled'}`;
 
+            const continueLink =
+                document.createElement('a');
+
+            const supportedRouteIds =
+                new Set([
+                    'temple',
+                    'forest',
+                    'ocean'
+                ]);
+
+            const editorRouteId =
+                supportedRouteIds.has(
+                    experience.id
+                )
+                    ? experience.id
+                    : 'temple';
+
+            continueLink.className =
+                'my-experiences__continue';
+
+            continueLink.href =
+                `/studio/experiences/${encodeURIComponent(editorRouteId)}/`;
+
+            continueLink.textContent =
+                'Continue Editing';
+
+            continueLink.addEventListener(
+                'click',
+                (event) => {
+                    event.preventDefault();
+
+                    const staged =
+                        library.stageForEditing(
+                            experience
+                        );
+
+                    if (!staged) {
+                        continueLink.textContent =
+                            'Unable to open';
+
+                        window.setTimeout(
+                            () => {
+                                continueLink.textContent =
+                                    'Continue Editing';
+                            },
+                            1800
+                        );
+
+                        return;
+                    }
+
+                    window.location.assign(
+                        continueLink.href
+                    );
+                }
+            );
+
             footer.append(
                 status,
-                details
+                details,
+                continueLink
             );
 
             card.append(
@@ -270,6 +328,29 @@
     .my-experiences__card-footer small {
         color: #64748b;
         text-align: right;
+    }
+
+    .my-experiences__continue {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 auto;
+        border-radius: 0.65rem;
+        background: #2563eb;
+        padding: 0.55rem 0.8rem;
+        color: #ffffff;
+        font-size: 0.72rem;
+        font-weight: 700;
+        line-height: 1;
+        text-decoration: none;
+        transition:
+            background 0.2s ease,
+            transform 0.2s ease;
+    }
+
+    .my-experiences__continue:hover {
+        transform: translateY(-1px);
+        background: #1d4ed8;
     }
 
     .my-experiences__empty {
