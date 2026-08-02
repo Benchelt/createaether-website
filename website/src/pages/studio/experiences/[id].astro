@@ -651,23 +651,13 @@ const selectedAudioTrack =
 ></audio>
 
 <script>
-    import { ExperienceState } from '../../../lib/ExperienceState';
-    import { ExperienceRuntime } from '../../../lib/ExperienceRuntime';
-    import { ExperienceLoader } from '../../../lib/ExperienceLoader';
-    import { ExperienceLibrary } from '../../../lib/storage/ExperienceLibrary';
     import type {
         Experience,
         ParticleSettings
     } from '../../../lib/models/Experience';
-    import { AudioSystem } from '../../../lib/systems/AudioSystem';
-    import { VisualSystem } from '../../../lib/systems/VisualSystem';
-    import { CssLightingEffect } from '../../../lib/visuals/CssLightingEffect';
-    import { CssFogEffect } from '../../../lib/visuals/CssFogEffect';
-    import { CssParticleEffect } from '../../../lib/visuals/CssParticleEffect';
-    import { CanvasRenderer } from '../../../lib/rendering/CanvasRenderer';
-    import { CanvasParticleEffect } from '../../../lib/visuals/CanvasParticleEffect';
-    import { PreviewController } from '../../../components/studio/PreviewController';
-    import { audioTracks } from '../../../data/audio/tracks';
+    import {
+        createStudioRuntime
+    } from '../../../lib/studio/StudioRuntime';
 
     const audioEnabledToggle =
         document.querySelector('#audio-enabled');
@@ -812,115 +802,25 @@ const selectedAudioTrack =
     const lightingStatus = document.querySelector('#lighting-status');
     const fogStatus = document.querySelector('#fog-status');
 
-    const previewController = new PreviewController({
-        volumeValue
-    });
-
-    const experienceRuntime = new ExperienceRuntime();
-    const experienceLibrary = new ExperienceLibrary();
-
-    const audioSystem = new AudioSystem(
+    const {
+        experienceRuntime,
+        experienceLibrary,
+        experienceState,
+        experienceLoader
+    } = createStudioRuntime({
         audioElement,
-        audioTracks,
-        experienceRuntime.events
-    );
-
-    experienceRuntime.register(
-        previewController
-    );
-
-    experienceRuntime.register(
-        audioSystem
-    );
-
-
-    const visualSystem =
-        new VisualSystem();
-
-    const cssLightingEffect =
-        new CssLightingEffect(
-            previewStage,
-            lightingStatus
-        );
-
-    visualSystem.register(
-        cssLightingEffect
-    );
-
-    const cssFogEffect =
-        new CssFogEffect(
-            previewStage,
-            fogStatus
-        );
-
-    visualSystem.register(
-        cssFogEffect
-    );
-
-    const cssParticleEffect =
-        new CssParticleEffect(
-            previewStage,
-            particlesStatus
-        );
-
-    visualSystem.register(
-        cssParticleEffect
-    );
-
-    experienceRuntime.register(
-        visualSystem
-    );
-
-    const canvasRenderer =
-        previewCanvas instanceof HTMLCanvasElement
-            ? new CanvasRenderer(previewCanvas)
-            : null;
-
-    const canvasParticleEffect =
-        canvasRenderer
-            ? new CanvasParticleEffect(
-                canvasRenderer,
-                experienceRuntime.events
-            )
-            : null;
-
-    if (canvasParticleEffect) {
-        visualSystem.register(
-            canvasParticleEffect
-        );
-    }
-
-    window.addEventListener(
-        'pagehide',
-        () => canvasRenderer?.destroy(),
-        {
-            once: true
-        }
-    );
-
-    experienceRuntime.initialise();
-    experienceRuntime.start();
-
-    const experienceState = new ExperienceState(
-        {
-            audioEnabledToggle,
-            audioTrack:
-                audioElement instanceof HTMLAudioElement
-                    ? audioElement.dataset.trackId ?? ''
-                    : '',
-            volumeControl,
-            particlesToggle,
-            lightingToggle,
-            fogToggle
-        },
-        (state) => experienceRuntime.update(state)
-    );
-
-    const experienceLoader =
-        new ExperienceLoader(
-            experienceRuntime,
-            experienceState
-        );
+        audioEnabledToggle,
+        volumeControl,
+        volumeValue,
+        particlesToggle,
+        lightingToggle,
+        fogToggle,
+        previewStage,
+        previewCanvas,
+        particlesStatus,
+        lightingStatus,
+        fogStatus
+    });
 
     let editableExperience: Experience | null = null;
 
